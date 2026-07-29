@@ -1,0 +1,35 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Spring Boot / Maven
+backend/target/
+backend/.classpath
+backend/.project
+backend/.settings/
+
+# Angular / Node
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.cache/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Local Spring configuration
+backend/src/main/resources/application-local.properties
+backend/src/main/resources/application-local.yml
+
+# Logs
+*.log
+logs/
+
+# Operating system
+.DS_Store
+Thumbs.db
