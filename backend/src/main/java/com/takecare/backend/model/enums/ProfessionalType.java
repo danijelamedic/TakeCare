@@ -1,0 +1,15 @@
+package com.takecare.backend.model.enums;
+
+public enum ProfessionalType {
+    PEDIATRICIAN,
+    GENERAL_PRACTITIONER,
+    NEUROLOGIST,
+    PSYCHIATRIST,
+    PSYCHOLOGIST,
+    SPEECH_THERAPIST,
+    PHYSIOTHERAPIST,
+    OCCUPATIONAL_THERAPIST,
+    SPECIAL_EDUCATION_TEACHER,
+    SOCIAL_WORKER,
+    OTHER
+}
