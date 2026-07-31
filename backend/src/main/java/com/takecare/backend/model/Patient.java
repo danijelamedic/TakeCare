@@ -1,11 +1,13 @@
 package com.takecare.backend.model;
 
+import com.takecare.backend.model.enums.BloodType;
 import com.takecare.backend.model.enums.Gender;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Builder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Patient {
 
     @Id
@@ -45,8 +48,9 @@ public class Patient {
     @Column(length = 50)
     private String emergencyContactPhone;
 
+    @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private String bloodType;
+    private BloodType bloodType;
 
     @Column(columnDefinition = "TEXT")
     private String allergies;
