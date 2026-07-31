@@ -1,0 +1,111 @@
+<section class="dashboard-page">
+    <header class="dashboard-header">
+        <h1>Welcome back, {{ firstName }}.</h1>
+
+        <p>
+            Let’s continue taking care of the people who matter.
+        </p>
+    </header>
+
+    <section class="dashboard-section">
+        <div class="section-heading">
+            <div>
+                <h2>Quick actions</h2>
+                <p>Choose what you would like to do next.</p>
+            </div>
+        </div>
+
+        <div class="quick-actions-grid">
+            <a routerLink="/parent/patient/create" class="action-card">
+                <div class="action-icon">
+                    ♡
+                </div>
+
+                <div class="action-content">
+                    <h3>Care profile</h3>
+                    <p>
+                        Create and manage the profile of the person you care for.
+                    </p>
+
+                    <span class="action-link">
+                        Create profile
+                    </span>
+                </div>
+            </a>
+
+            <button type="button" class="action-card" disabled>
+                <div class="action-icon">
+                    ◷
+                </div>
+
+                <div class="action-content">
+                    <h3>Appointments</h3>
+                    <p>
+                        Keep track of upcoming visits and important dates.
+                    </p>
+
+                    <span class="action-link">
+                        Schedule
+                    </span>
+                </div>
+            </button>
+
+            <button type="button" class="action-card" disabled>
+                <div class="action-icon">
+                    +
+                </div>
+
+                <div class="action-content">
+                    <h3>Therapies</h3>
+                    <p>
+                        Add therapies, instructions and treatment schedules.
+                    </p>
+
+                    <span class="action-link">
+                        Add therapy
+                    </span>
+                </div>
+            </button>
+
+            <button type="button" class="action-card" disabled>
+                <div class="action-icon">
+                    ▤
+                </div>
+
+                <div class="action-content">
+                    <h3>Documents</h3>
+                    <p>
+                        Store reports, results and other important files.
+                    </p>
+
+                    <span class="action-link">
+                        Upload document
+                    </span>
+                </div>
+            </button>
+        </div>
+    </section>
+
+    <section class="dashboard-section recent-section">
+        <div class="section-heading">
+            <div>
+                <h2>Recent activity</h2>
+                <p>Your latest actions will appear here.</p>
+            </div>
+        </div>
+
+        <div class="empty-activity">
+            <div class="empty-icon">
+                ◌
+            </div>
+
+            <div>
+                <h3>No activity yet</h3>
+                <p>
+                    Create a care profile to start organizing important
+                    information.
+                </p>
+            </div>
+        </div>
+    </section>
+</section>
