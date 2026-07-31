@@ -1,0 +1,76 @@
+<div class="app-shell">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <img src="logo.png" alt="TakeCare logo" class="sidebar-logo" />
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Main navigation">
+            <a routerLink="/parent" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+                class="nav-item">
+                <span class="nav-icon">⌂</span>
+                <span>Home</span>
+            </a>
+
+            <a routerLink="/parent/patient" routerLinkActive="active" class="nav-item">
+                <span class="nav-icon">♡</span>
+                <span>Care profile</span>
+            </a>
+
+            <a routerLink="/parent/profile" routerLinkActive="active" class="nav-item">
+                <span class="nav-icon">○</span>
+                <span>My profile</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button type="button" class="logout-button" (click)="logout()">
+                <span class="nav-icon">↪</span>
+                <span>Sign out</span>
+            </button>
+        </div>
+    </aside>
+
+    <section class="main-area">
+        <header class="topbar">
+            <div>
+                <!-- <p class="topbar-eyebrow">TakeCare</p> -->
+                <p class="topbar-title">Caregiver workspace</p>
+            </div>
+
+            <div class="profile-area">
+                <button type="button" class="profile-button" (click)="toggleProfileMenu()" [attr.aria-expanded]="isProfileMenuOpen"
+                    aria-label="Open profile menu">
+                    <span class="avatar">
+                        {{ initials || 'U' }}
+                    </span>
+                </button>
+
+                @if (isProfileMenuOpen) {
+                @if (isProfileMenuOpen) {
+                <div class="profile-menu">
+                    <div class="profile-menu-user">
+                        <strong>
+                            {{ user?.firstName }} {{ user?.lastName }}
+                        </strong>
+                
+                        <span>{{ user?.email }}</span>
+                    </div>
+                
+                    <a routerLink="/parent/profile">
+                        My profile
+                    </a>
+                
+                    <button type="button" (click)="logout()">
+                        Sign out
+                    </button>
+                </div>
+                }
+                }
+            </div>
+        </header>
+
+        <main class="page-content">
+            <router-outlet></router-outlet>
+        </main>
+    </section>
+</div>
