@@ -33,3 +33,6 @@ logs/
 # Operating system
 .DS_Store
 Thumbs.db
+
+# Test data
+backend/src/main/java/com/takecare/backend/controller/debug/
