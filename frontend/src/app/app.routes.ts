@@ -5,6 +5,7 @@ import { Register } from './features/auth/register/register';
 import { ParentHome } from './features/parent-home/parent-home';
 import { ParentLayout } from './layouts/parent-layout/parent-layout';
 import { authGuard } from './core/guards/auth.guard';
+import { CareProfile } from './features/care-profile/care-profile';
 
 export const routes: Routes = [
     {
@@ -37,6 +38,11 @@ export const routes: Routes = [
                 path: '',
                 component: ParentHome,
                 title: 'Home | TakeCare'
+            },
+            {
+                path: 'care-profile',
+                component: CareProfile,
+                title: 'Care profile | TakeCare'
             }
         ]
     },
