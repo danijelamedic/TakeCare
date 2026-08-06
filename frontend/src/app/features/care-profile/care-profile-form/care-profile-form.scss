@@ -1,0 +1,287 @@
+:host {
+    display: block;
+}
+
+.care-profile-form-page {
+    width: 100%;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 52px 36px 64px;
+}
+
+.form-page-header {
+    margin-bottom: 28px;
+
+    .eyebrow {
+        margin: 0 0 8px;
+        color: #3b7288;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    h1 {
+        margin: 0;
+        color: #062246;
+        font-size: clamp(30px, 3vw, 42px);
+        line-height: 1.15;
+        font-weight: 800;
+    }
+
+    .page-description {
+        max-width: 720px;
+        margin: 12px 0 0;
+        color: #60708a;
+        font-size: 15px;
+        line-height: 1.7;
+    }
+}
+
+.care-profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.form-card,
+.form-state-card {
+    border: 1px solid #dde7ee;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 12px 32px rgba(20, 62, 92, 0.06);
+}
+
+.form-card {
+    padding: 28px;
+}
+
+.form-state-card {
+    padding: 36px;
+    color: #52627a;
+    text-align: center;
+}
+
+.form-card__header {
+    margin-bottom: 24px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #edf2f5;
+
+    h2 {
+        margin: 0;
+        color: #08264a;
+        font-size: 20px;
+        font-weight: 750;
+    }
+
+    p {
+        margin: 7px 0 0;
+        color: #718096;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.form-field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+        color: #132c4c;
+        font-size: 14px;
+        font-weight: 700;
+
+        span {
+            color: #d14d62;
+        }
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        border: 1px solid #d6e1e8;
+        border-radius: 12px;
+        background: #f8fbfc;
+        color: #09264a;
+        font: inherit;
+        outline: none;
+        transition:
+            border-color 160ms ease,
+            background-color 160ms ease,
+            box-shadow 160ms ease;
+    }
+
+    input,
+    select {
+        min-height: 48px;
+        padding: 0 14px;
+    }
+
+    textarea {
+        min-height: 116px;
+        padding: 13px 14px;
+        line-height: 1.55;
+        resize: vertical;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+        color: #9aa9b8;
+    }
+
+    input:hover,
+    select:hover,
+    textarea:hover {
+        border-color: #b8ccd8;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+        border-color: #24769a;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(36, 118, 154, 0.12);
+    }
+
+    input.ng-invalid.ng-touched,
+    select.ng-invalid.ng-touched,
+    textarea.ng-invalid.ng-touched {
+        border-color: #df6574;
+        box-shadow: 0 0 0 4px rgba(223, 101, 116, 0.1);
+    }
+}
+
+.form-field--full {
+    grid-column: 1 / -1;
+}
+
+.field-error {
+    margin: 0;
+    color: #c73e52;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.field-hint {
+    margin: 0;
+    color: #8493a5;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.form-alert {
+    margin-bottom: 20px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.form-alert--error {
+    border: 1px solid #f0b5bd;
+    background: #fff3f5;
+    color: #a62c3e;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 4px;
+}
+
+.primary-button,
+.secondary-button {
+    min-width: 140px;
+    min-height: 46px;
+    padding: 0 22px;
+    border-radius: 12px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 750;
+    cursor: pointer;
+    transition:
+        transform 150ms ease,
+        box-shadow 150ms ease,
+        background-color 150ms ease,
+        border-color 150ms ease;
+}
+
+.primary-button {
+    border: 1px solid #11768f;
+    background: #11768f;
+    color: #ffffff;
+    box-shadow: 0 8px 18px rgba(17, 118, 143, 0.2);
+
+    &:hover:not(:disabled) {
+        transform: translateY(-1px);
+        background: #0d6880;
+        box-shadow: 0 10px 22px rgba(17, 118, 143, 0.26);
+    }
+}
+
+.secondary-button {
+    border: 1px solid #ccd9e1;
+    background: #ffffff;
+    color: #24415f;
+
+    &:hover:not(:disabled) {
+        border-color: #aebfca;
+        background: #f6f9fa;
+    }
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+@media (max-width: 900px) {
+    .care-profile-form-page {
+        padding: 36px 24px 52px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-field--full {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    .care-profile-form-page {
+        padding: 26px 16px 40px;
+    }
+
+    .form-card {
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .form-page-header h1 {
+        font-size: 30px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .primary-button,
+    .secondary-button {
+        width: 100%;
+    }
+}

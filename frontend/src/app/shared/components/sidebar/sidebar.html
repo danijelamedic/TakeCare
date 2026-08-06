@@ -1,0 +1,29 @@
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <img src="logo.png" alt="TakeCare logo" class="sidebar-logo" />
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Main navigation">
+        <a routerLink="/parent" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-item">
+            <span class="nav-icon">⌂</span>
+            <span>Home</span>
+        </a>
+
+        <a routerLink="/parent/care-profile" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">♡</span>
+            <span>Care profile</span>
+        </a>
+
+        <a routerLink="/parent/profile" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">○</span>
+            <span>My profile</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <button type="button" class="logout-button" (click)="signOut()">
+            <span class="nav-icon">↪</span>
+            <span>Sign out</span>
+        </button>
+    </div>
+</aside>

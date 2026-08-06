@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
+import { Sidebar } from '../../shared/components/sidebar/sidebar';
 
 @Component({
     selector: 'app-parent-layout',
     standalone: true,
     imports: [
         RouterOutlet,
-        RouterLink,
-        RouterLinkActive
+        Sidebar
     ],
     templateUrl: './parent-layout.html',
     styleUrl: './parent-layout.scss'

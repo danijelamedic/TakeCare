@@ -9,26 +9,29 @@
 
     <section class="dashboard-section">
         <div class="section-heading">
-            <div>
-                <h2>Quick actions</h2>
-                <p>Choose what you would like to do next.</p>
-            </div>
+            <h2>Quick actions</h2>
         </div>
 
         <div class="quick-actions-grid">
-            <a routerLink="/parent/patient/create" class="action-card">
+            <a [routerLink]="careProfileRoute" class="action-card" [class.action-card--loading]="isCareProfileLoading"
+                [attr.aria-disabled]="isCareProfileLoading">
                 <div class="action-icon">
                     ♡
                 </div>
-
+            
                 <div class="action-content">
                     <h3>Care profile</h3>
+            
                     <p>
-                        Create and manage the profile of the person you care for.
+                        @if (hasCareProfile) {
+                        View and manage the profile of the person you care for.
+                        } @else {
+                        Create the profile of the person you care for.
+                        }
                     </p>
-
+            
                     <span class="action-link">
-                        Create profile
+                        {{ careProfileActionLabel }}
                     </span>
                 </div>
             </a>
@@ -88,10 +91,8 @@
 
     <section class="dashboard-section recent-section">
         <div class="section-heading">
-            <div>
-                <h2>Recent activity</h2>
-                <p>Your latest actions will appear here.</p>
-            </div>
+            <h2>Recent activity</h2>
+            
         </div>
 
         <div class="empty-activity">
@@ -102,8 +103,11 @@
             <div>
                 <h3>No activity yet</h3>
                 <p>
-                    Create a care profile to start organizing important
-                    information.
+                    @if (hasCareProfile) {
+                    Appointments, therapies and other activity will appear here.
+                    } @else {
+                    Create a care profile to start organising important information.
+                    }
                 </p>
             </div>
         </div>

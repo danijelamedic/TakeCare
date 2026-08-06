@@ -1,0 +1,247 @@
+<section class="care-profile-form-page">
+    @if (isLoading) {
+    <div class="form-state-card">
+        <p>Loading care profile...</p>
+    </div>
+    } @else {
+    <div class="form-page-header">
+        <div>
+            <p class="eyebrow">
+                Care profile
+            </p>
+
+            <h1>
+                {{ pageTitle }}
+            </h1>
+
+            <p class="page-description">
+                Add the information needed to organise care,
+                therapies, appointments and important health details.
+            </p>
+        </div>
+    </div>
+
+    @if (errorMessage) {
+    <div class="form-alert form-alert--error">
+        {{ errorMessage }}
+    </div>
+    }
+
+    <form class="care-profile-form" [formGroup]="careProfileForm" (ngSubmit)="submit()">
+        <article class="form-card">
+            <div class="form-card__header">
+                
+                <h2>Basic information</h2>
+                
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="firstName">
+                        First name
+                        <span aria-hidden="true">*</span>
+                    </label>
+
+                    <input id="firstName" type="text" formControlName="firstName" placeholder="Enter first name"
+                        autocomplete="given-name" />
+
+                    @if (hasError('firstName', 'required')) {
+                    <p class="field-error">
+                        First name is required.
+                    </p>
+                    }
+
+                    @if (hasError('firstName', 'maxlength')) {
+                    <p class="field-error">
+                        First name cannot exceed 100 characters.
+                    </p>
+                    }
+                </div>
+
+                <div class="form-field">
+                    <label for="lastName">
+                        Last name
+                        <span aria-hidden="true">*</span>
+                    </label>
+
+                    <input id="lastName" type="text" formControlName="lastName" placeholder="Enter last name"
+                        autocomplete="family-name" />
+
+                    @if (hasError('lastName', 'required')) {
+                    <p class="field-error">
+                        Last name is required.
+                    </p>
+                    }
+
+                    @if (hasError('lastName', 'maxlength')) {
+                    <p class="field-error">
+                        Last name cannot exceed 100 characters.
+                    </p>
+                    }
+                </div>
+
+                <div class="form-field">
+                    <label for="dateOfBirth">
+                        Date of birth
+                        <span aria-hidden="true">*</span>
+                    </label>
+
+                    <input id="dateOfBirth" type="date" formControlName="dateOfBirth" />
+
+                    @if (hasError('dateOfBirth', 'required')) {
+                    <p class="field-error">
+                        Date of birth is required.
+                    </p>
+                    }
+                </div>
+
+                <div class="form-field">
+                    <label for="gender">
+                        Gender
+                    </label>
+
+                    <select id="gender" formControlName="gender">
+                        <option value="">
+                            Select gender
+                        </option>
+
+                        @for (
+                        option of genderOptions;
+                        track option.value
+                        ) {
+                        <option [value]="option.value">
+                            {{ option.label }}
+                        </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="bloodType">
+                        Blood type
+                    </label>
+
+                    <select id="bloodType" formControlName="bloodType">
+                        @for (
+                        option of bloodTypeOptions;
+                        track option.value
+                        ) {
+                        <option [value]="option.value">
+                            {{ option.label }}
+                        </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="address">
+                        Address
+                    </label>
+
+                    <input id="address" type="text" formControlName="address" placeholder="Enter address"
+                        autocomplete="street-address" />
+                </div>
+
+                <!-- <div class="form-field form-field--full">
+                    <label for="profileImage">
+                        Profile image URL
+                    </label>
+
+                    <input id="profileImage" type="url" formControlName="profileImage"
+                        placeholder="https://example.com/profile-image.jpg" />
+
+                    <p class="field-hint">
+                        For now, enter a direct image URL.
+                    </p>
+                </div> -->
+            </div>
+        </article>
+
+        <article class="form-card">
+            <div class="form-card__header">
+                
+                <h2>Emergency contact</h2>
+                
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="emergencyContactName">
+                        Contact name
+                    </label>
+
+                    <input id="emergencyContactName" type="text" formControlName="emergencyContactName"
+                        placeholder="Enter contact name" autocomplete="name" />
+                </div>
+
+                <div class="form-field">
+                    <label for="emergencyContactPhone">
+                        Phone number
+                    </label>
+
+                    <input id="emergencyContactPhone" type="tel" formControlName="emergencyContactPhone"
+                        placeholder="+381 60 123 4567" autocomplete="tel" />
+                </div>
+            </div>
+        </article>
+
+        <article class="form-card">
+            <div class="form-card__header">
+                <h2>Health and support information</h2>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-field form-field--full">
+                    <label for="allergies">
+                        Allergies
+                    </label>
+
+                    <textarea id="allergies" rows="4" formControlName="allergies"
+                        placeholder="Enter allergies or sensitivities"></textarea>
+                </div>
+
+                <div class="form-field form-field--full">
+                    <label for="specialNeeds">
+                        Special needs
+                    </label>
+
+                    <textarea id="specialNeeds" rows="4" formControlName="specialNeeds"
+                        placeholder="Enter special needs or support requirements"></textarea>
+                </div>
+
+                <div class="form-field form-field--full">
+                    <label for="importantInformation">
+                        Important information
+                    </label>
+
+                    <textarea id="importantInformation" rows="4" formControlName="importantInformation"
+                        placeholder="Add anything caregivers and healthcare professionals should know"></textarea>
+                </div>
+
+                <div class="form-field form-field--full">
+                    <label for="generalNotes">
+                        General notes
+                    </label>
+
+                    <textarea id="generalNotes" rows="4" formControlName="generalNotes"
+                        placeholder="Add any additional notes"></textarea>
+                </div>
+            </div>
+        </article>
+
+        <div class="form-actions">
+            <button type="button" class="secondary-button" [disabled]="isSubmitting" (click)="cancel()">
+                Cancel
+            </button>
+
+            <button type="submit" class="primary-button" [disabled]="isSubmitting">
+                @if (isSubmitting) {
+                Saving...
+                } @else {
+                {{ submitButtonLabel }}
+                }
+            </button>
+        </div>
+    </form>
+    }
+</section>

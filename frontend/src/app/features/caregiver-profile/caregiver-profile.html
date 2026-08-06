@@ -1,0 +1,76 @@
+<section class="caregiver-profile-page">
+    @if (isLoading) {
+    <div class="state-card">
+        <p>Loading your profile...</p>
+    </div>
+    } @else if (errorMessage) {
+    <div class="state-card state-card--error">
+        <p>{{ errorMessage }}</p>
+    </div>
+    } @else if (user) {
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {{ initials }}
+        </div>
+
+        <div>
+            <p class="eyebrow">My profile</p>
+
+            <h1>
+                {{ user.firstName }}
+                {{ user.lastName }}
+            </h1>
+
+            <p class="role-label">
+                {{ formatRole(user.role) }}
+            </p>
+        </div>
+    </div>
+
+    <article class="profile-card">
+        <h2>Personal information</h2>
+
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">
+                    First name
+                </span>
+
+                <strong>
+                    {{ user.firstName }}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    Last name
+                </span>
+
+                <strong>
+                    {{ user.lastName }}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    Email 
+                </span>
+
+                <strong>
+                    {{ user.email }}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    Account type
+                </span>
+
+                <strong>
+                    {{ formatRole(user.role) }}
+                </strong>
+            </div>
+        </div>
+    </article>
+    }
+</section>
