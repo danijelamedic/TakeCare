@@ -9,8 +9,7 @@ import java.util.Optional;
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 
     Optional<Patient> findByParent(User parent);
-
     boolean existsByParent(User parent);
-
     Optional<Patient> findBySupportCoordinator(User supportCoordinator);
+    boolean existsBySupportCoordinator(User supportCoordinator);
 }

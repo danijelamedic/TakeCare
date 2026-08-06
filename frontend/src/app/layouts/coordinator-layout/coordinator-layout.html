@@ -1,0 +1,49 @@
+<div class="app-shell">
+    <app-coordinator-sidebar />
+
+    <section class="main-area">
+        <header class="topbar">
+            <div>
+                <p class="topbar-title">
+                    Support Coordinator workspace
+                </p>
+            </div>
+
+            <div class="profile-area">
+                <button type="button" class="profile-button" (click)="toggleProfileMenu()"
+                    [attr.aria-expanded]="isProfileMenuOpen" aria-label="Open profile menu">
+                    <span class="avatar">
+                        {{ initials || 'U' }}
+                    </span>
+                </button>
+
+                @if (isProfileMenuOpen) {
+                <div class="profile-menu">
+                    <div class="profile-menu-user">
+                        <strong>
+                            {{ user?.firstName }}
+                            {{ user?.lastName }}
+                        </strong>
+
+                        <span>
+                            {{ user?.email }}
+                        </span>
+                    </div>
+
+                    <a routerLink="/coordinator/profile">
+                        My profile
+                    </a>
+
+                    <button type="button" (click)="logout()">
+                        Sign out
+                    </button>
+                </div>
+                }
+            </div>
+        </header>
+
+        <main class="page-content">
+            <router-outlet />
+        </main>
+    </section>
+</div>

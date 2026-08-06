@@ -1,9 +1,7 @@
 package com.takecare.backend.dto.auth;
 
-import com.takecare.backend.model.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -29,6 +27,4 @@ public class RegisterRequest {
     @Size(min = 8, message = "Password must contain at least 8 characters")
     private String password;
 
-    @NotNull(message = "Role is required")
-    private Role role;
 }

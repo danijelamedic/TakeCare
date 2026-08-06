@@ -5,6 +5,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { RegisterRequest } from '../../../core/models/auth.models';
 
 function passwordsMatchValidator(
     control: AbstractControl
@@ -110,10 +111,7 @@ export class Register {
             ...formValue
         } = this.registerForm.getRawValue();
 
-        const request = {
-            ...formValue,
-            role: 'PARENT'
-        };
+        const request: RegisterRequest = formValue;
 
         this.isLoading = true;
 

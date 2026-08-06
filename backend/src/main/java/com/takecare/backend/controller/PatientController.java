@@ -47,4 +47,10 @@ public class PatientController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/assigned")
+    @PreAuthorize("hasRole('SUPPORT_COORDINATOR')")
+    public PatientResponse getAssignedPatient() {
+        return patientService.getAssignedPatient();
+    }
 }

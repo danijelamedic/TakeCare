@@ -66,7 +66,12 @@ export class Login {
 
                 this.isLoading = false;
 
-                this.router.navigateByUrl('/parent').then(success => {
+                const targetRoute =
+                    response.user.role === 'SUPPORT_COORDINATOR'
+                        ? '/coordinator'
+                        : '/parent';
+
+                this.router.navigateByUrl(targetRoute).then(success => {
                     console.log('Navigation successful:', success);
                 });
             },

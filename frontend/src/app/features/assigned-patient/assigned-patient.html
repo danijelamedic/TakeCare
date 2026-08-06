@@ -1,0 +1,213 @@
+<section class="care-profile-page">
+    @if (isLoading) {
+    <div class="state-card">
+        <p>Loading care profile...</p>
+    </div>
+    } @else if (errorMessage) {
+    <div class="state-card state-card--error">
+        <p>{{ errorMessage }}</p>
+    </div>
+    } @else if (patient) {
+    <div class="profile-header">
+        <div class="profile-identity">
+            <div class="profile-avatar">
+                @if (patient.profileImage) {
+                <img [src]="patient.profileImage" [alt]="patient.firstName + ' ' + patient.lastName" />
+                } @else {
+                <span>
+                    {{ patient.firstName.charAt(0) }}
+                    {{ patient.lastName.charAt(0) }}
+                </span>
+                }
+            </div>
+
+            <div>
+                <p class="eyebrow">Assigned patient</p>
+
+                <h1>
+                    {{ patient.firstName }}
+                    {{ patient.lastName }}
+                </h1>
+
+                <div class="profile-summary">
+                    <span>{{ patient.dateOfBirth }}</span>
+
+                    <span class="summary-separator"></span>
+
+                    <span>{{ formatGender(patient.gender) }}</span>
+
+                    <span class="summary-separator"></span>
+
+                    <span>{{ formatBloodType(patient.bloodType) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-grid">
+        <article class="profile-card">
+            <div class="card-heading">
+                <div>
+                    <h2>Basic information</h2>
+                </div>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-item">
+                    <span class="detail-label">First name</span>
+                    <strong>{{ patient.firstName }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Last name</span>
+                    <strong>{{ patient.lastName }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Date of birth</span>
+                    <strong>{{ patient.dateOfBirth }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Gender</span>
+                    <strong>{{ formatGender(patient.gender) }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Blood type</span>
+                    <strong>{{ formatBloodType(patient.bloodType) }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Address</span>
+                    <strong>
+                        {{ patient.address || 'Not provided' }}
+                    </strong>
+                </div>
+            </div>
+        </article>
+
+        <article class="profile-card emergency-card">
+            <div class="card-heading">
+                <div>
+                    <h2>Emergency contact</h2>
+                </div>
+            </div>
+
+            <div class="emergency-content">
+                <div class="emergency-avatar">
+                    {{
+                    patient.emergencyContactName
+                    ? patient.emergencyContactName.charAt(0)
+                    : '?'
+                    }}
+                </div>
+
+                <div>
+                    <strong>
+                        {{
+                        patient.emergencyContactName ||
+                        'Not provided'
+                        }}
+                    </strong>
+
+                    <p>
+                        {{
+                        patient.emergencyContactPhone ||
+                        'No phone number'
+                        }}
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <article class="profile-card full-width">
+            <div class="card-heading">
+                <div>
+                    <h2>Health and support information</h2>
+                </div>
+            </div>
+
+            <div class="medical-grid">
+                <section class="info-panel">
+                    <div class="info-panel__heading">
+                        <span class="info-icon">A</span>
+                        <h3>Allergies</h3>
+                    </div>
+
+                    <p>
+                        {{
+                        patient.allergies ||
+                        'No allergies have been added.'
+                        }}
+                    </p>
+                </section>
+
+                <section class="info-panel">
+                    <div class="info-panel__heading">
+                        <span class="info-icon">CD</span>
+                        <h3>Chronic diseases</h3>
+                    </div>
+
+                    <p>
+                        {{ patient.chronicDiseases || 'Not provided' }}
+                    </p>
+                </section>
+
+                <section class="info-panel">
+                    <div class="info-panel__heading">
+                        <span class="info-icon">D</span>
+                        <h3>Diagnoses</h3>
+                    </div>
+
+                    <p>
+                        {{ patient.diagnoses || 'Not provided' }}
+                    </p>
+                </section>
+
+                <section class="info-panel">
+                    <div class="info-panel__heading">
+                        <span class="info-icon">S</span>
+                        <h3>Special needs</h3>
+                    </div>
+
+                    <p>
+                        {{
+                        patient.specialNeeds ||
+                        'No special needs have been added.'
+                        }}
+                    </p>
+                </section>
+
+                <section class="info-panel">
+                    <div class="info-panel__heading">
+                        <span class="info-icon">!</span>
+                        <h3>Important information</h3>
+                    </div>
+
+                    <p>
+                        {{
+                        patient.importantInformation ||
+                        'No important information has been added.'
+                        }}
+                    </p>
+                </section>
+
+                <section class="info-panel">
+                    <div class="info-panel__heading">
+                        <span class="info-icon">N</span>
+                        <h3>General notes</h3>
+                    </div>
+
+                    <p>
+                        {{
+                        patient.generalNotes ||
+                        'No general notes have been added.'
+                        }}
+                    </p>
+                </section>
+            </div>
+        </article>
+    </div>
+    }
+</section>
