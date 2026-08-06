@@ -64,6 +64,12 @@ public class Patient {
     @Column(columnDefinition = "TEXT")
     private String generalNotes;
 
+    @Column(columnDefinition = "TEXT")
+    private String chronicDiseases;
+
+    @Column(columnDefinition = "TEXT")
+    private String diagnoses;
+
     @OneToOne(optional = false)
     @JoinColumn(
             name = "parent_id",

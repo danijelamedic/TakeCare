@@ -9,6 +9,8 @@ export interface PatientRequest {
     emergencyContactPhone: string | null;
     bloodType: string | null;
     allergies: string | null;
+    chronicDiseases: string | null;
+    diagnoses: string | null;
     specialNeeds: string | null;
     importantInformation: string | null;
     generalNotes: string | null;
@@ -26,6 +28,8 @@ export interface PatientResponse {
     emergencyContactPhone: string | null;
     bloodType: string | null;
     allergies: string | null;
+    chronicDiseases: string | null;
+    diagnoses: string | null;
     specialNeeds: string | null;
     importantInformation: string | null;
     generalNotes: string | null;
