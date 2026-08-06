@@ -1,21 +1,23 @@
 import { Component } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive} from '@angular/router';
-
 import {
-    AuthService
-} from '../../../core/services/auth.service';
+    Router,
+    RouterLink,
+    RouterLinkActive
+} from '@angular/router';
+
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
-    selector: 'app-sidebar',
+    selector: 'app-coordinator-sidebar',
     standalone: true,
     imports: [
         RouterLink,
         RouterLinkActive
     ],
-    templateUrl: './sidebar.html',
-    styleUrl: './sidebar.scss'
+    templateUrl: './coordinator-sidebar.html',
+    styleUrl: './coordinator-sidebar.scss'
 })
-export class Sidebar {
+export class CoordinatorSidebar {
     constructor(
         private readonly authService: AuthService,
         private readonly router: Router

@@ -40,4 +40,10 @@ export class PatientService {
             request
         );
     }
+
+    getAssignedPatient(): Observable<PatientResponse> {
+        return this.http.get<PatientResponse>(
+            `${environment.apiUrl}/patients/assigned`
+        );
+    }
 }

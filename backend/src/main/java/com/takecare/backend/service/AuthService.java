@@ -6,6 +6,7 @@ import com.takecare.backend.dto.auth.RegisterRequest;
 import com.takecare.backend.dto.auth.UserResponse;
 import com.takecare.backend.exception.EmailAlreadyExistsException;
 import com.takecare.backend.model.User;
+import com.takecare.backend.model.enums.Role;
 import com.takecare.backend.repository.UserRepository;
 import com.takecare.backend.security.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -50,7 +51,7 @@ public class AuthService {
                 .lastName(request.getLastName().trim())
                 .email(normalizedEmail)
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(request.getRole())
+                .role(Role.PARENT)
                 .build();
 
         User savedUser = userRepository.save(user);

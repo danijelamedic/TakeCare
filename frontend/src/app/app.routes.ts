@@ -8,6 +8,10 @@ import { authGuard } from './core/guards/auth.guard';
 import { CareProfile } from './features/care-profile/care-profile';
 import { CareProfileForm } from './features/care-profile/care-profile-form/care-profile-form';
 import { CaregiverProfile } from './features/caregiver-profile/caregiver-profile';
+import { CoordinatorHome } from './features/coordinator-home/coordinator-home';
+import { CoordinatorLayout } from './layouts/coordinator-layout/coordinator-layout';
+import { SupportCoordinator } from './features/support-coordinator/support-coordinator';
+import { AssignedPatient } from './features/assigned-patient/assigned-patient';
 
 export const routes: Routes = [
     {
@@ -66,6 +70,28 @@ export const routes: Routes = [
                 path: 'profile',
                 component: CaregiverProfile,
                 title: 'My profile | TakeCare'
+            },
+            {
+                path: 'support-coordinator',
+                component: SupportCoordinator,
+                title: 'Support coordinator | TakeCare'
+            },
+        ]
+    },
+    {
+        path: 'coordinator',
+        component: CoordinatorLayout,
+        canActivate: [authGuard],
+        children: [
+            {
+                path: '',
+                component: CoordinatorHome,
+                title: 'Coordinator | TakeCare'
+            },
+            {
+                path: 'patient',
+                component: AssignedPatient,
+                title: 'Assigned patient | TakeCare'
             }
         ]
     },

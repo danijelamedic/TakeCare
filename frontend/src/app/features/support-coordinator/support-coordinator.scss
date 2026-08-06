@@ -1,0 +1,141 @@
+.support-coordinator-page {
+    max-width: 920px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 28px;
+}
+
+.eyebrow {
+    margin: 0 0 8px;
+    color: #2c7da0;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.page-header h1 {
+    margin: 0;
+    color: #08233f;
+    font-size: 34px;
+}
+
+.page-description {
+    max-width: 680px;
+    margin: 12px 0 0;
+    color: #60758a;
+    line-height: 1.6;
+}
+
+.connection-card,
+.state-card {
+    padding: 28px;
+    border: 1px solid #dbe5ed;
+    border-radius: 18px;
+    background: #ffffff;
+    box-shadow: 0 12px 30px rgba(8, 35, 63, 0.06);
+}
+
+.connection-card__header h2 {
+    margin: 0;
+    color: #08233f;
+}
+
+.connection-card__header p {
+    margin: 8px 0 0;
+    color: #60758a;
+}
+
+.coordinator-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.coordinator-option {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition:
+        border-color 160ms ease,
+        background 160ms ease;
+}
+
+.coordinator-option:hover,
+.coordinator-option--selected {
+    border-color: #2c7da0;
+    background: #f2fbfd;
+}
+
+.coordinator-option input {
+    accent-color: #2c7da0;
+}
+
+.coordinator-avatar {
+    display: grid;
+    width: 46px;
+    height: 46px;
+    place-items: center;
+    border-radius: 50%;
+    background: #dff5f8;
+    color: #176b7a;
+    font-weight: 700;
+}
+
+.coordinator-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.coordinator-details strong {
+    color: #08233f;
+}
+
+.coordinator-details span {
+    color: #60758a;
+}
+
+.connection-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
+
+.primary-button {
+    min-height: 46px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: 12px;
+    background: #0b4f81;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.primary-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.alert {
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    border-radius: 12px;
+}
+
+.alert--error {
+    background: #fff1f1;
+    color: #9f2626;
+}
+
+.alert--success {
+    background: #edf9f2;
+    color: #256b42;
+}

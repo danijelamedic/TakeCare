@@ -1,0 +1,89 @@
+<section class="support-coordinator-page">
+    <div class="page-header">
+        <h1>Connect a support coordinator</h1>
+    </div>
+
+    @if (isLoading) {
+    <div class="state-card">
+        Loading available coordinators...
+    </div>
+    } @else {
+    @if (errorMessage) {
+    <div class="alert alert--error">
+        {{ errorMessage }}
+    </div>
+    }
+
+    @if (successMessage) {
+    <div class="alert alert--success">
+        {{ successMessage }}
+    </div>
+    }
+
+    @if (coordinators.length === 0) {
+    <div class="state-card">
+        <h2>No coordinators available</h2>
+
+        <p>
+            There are currently no support coordinators
+            available for a new connection request.
+        </p>
+    </div>
+    } @else {
+    <article class="connection-card">
+        <div class="connection-card__header">
+            <h2>Select a coordinator</h2>
+
+            <p>
+                Only coordinators who are currently available
+                are shown.
+            </p>
+        </div>
+
+        <div class="coordinator-list">
+            @for (
+            coordinator of coordinators;
+            track coordinator.id
+            ) {
+            <label class="coordinator-option" [class.coordinator-option--selected]="
+                                selectedCoordinatorId === coordinator.id
+                            ">
+                <input type="radio" name="supportCoordinator" [value]="coordinator.id" [checked]="
+                                    selectedCoordinatorId === coordinator.id
+                                " (change)="
+                                    selectedCoordinatorId = coordinator.id
+                                " />
+
+                <span class="coordinator-avatar">
+                    {{ coordinator.firstName.charAt(0) }}
+                    {{ coordinator.lastName.charAt(0) }}
+                </span>
+
+                <span class="coordinator-details">
+                    <strong>
+                        {{ coordinator.firstName }}
+                        {{ coordinator.lastName }}
+                    </strong>
+
+                    <span>{{ coordinator.email }}</span>
+                </span>
+            </label>
+            }
+        </div>
+
+        <div class="connection-actions">
+            <button type="button" class="primary-button" [disabled]="
+                            selectedCoordinatorId === null ||
+                            isSubmitting
+                        " (click)="sendRequest()">
+                {{
+                isSubmitting
+                ? 'Sending request...'
+                : 'Send connection request'
+                }}
+            </button>
+        </div>
+    </article>
+    }
+    }
+</section>

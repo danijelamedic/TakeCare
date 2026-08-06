@@ -6,6 +6,7 @@ import com.takecare.backend.exception.PatientAlreadyExistsException;
 import com.takecare.backend.exception.PatientNotFoundException;
 import com.takecare.backend.model.Patient;
 import com.takecare.backend.model.User;
+import com.takecare.backend.model.enums.Role;
 import com.takecare.backend.repository.PatientRepository;
 import com.takecare.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -144,5 +145,24 @@ public class PatientService {
                 .createdAt(patient.getCreatedAt())
                 .updatedAt(patient.getUpdatedAt())
                 .build();
+    }
+
+    @Transactional(readOnly = true)
+    public PatientResponse getAssignedPatient() {
+        User currentUser = getCurrentUser();
+
+        if (currentUser.getRole() != Role.SUPPORT_COORDINATOR) {
+            throw new IllegalStateException(
+                    "Only a support coordinator can view an assigned patient"
+            );
+        }
+
+        Patient patient = patientRepository
+                .findBySupportCoordinator(currentUser)
+                .orElseThrow(() -> new PatientNotFoundException(
+                        "No patient is assigned to the current coordinator"
+                ));
+
+        return mapToResponse(patient);
     }
 }
