@@ -1,18 +1,11 @@
 import { CommonModule } from '@angular/common';
-import {
-    ChangeDetectorRef,
-    Component,
-    OnInit
-} from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
+import { Router } from '@angular/router';
 
-import {
-    PatientResponse
-} from '../../core/models/patient.models';
-import {
-    PatientService
-} from '../../core/services/patient.service';
+import { PatientResponse} from '../../core/models/patient.models';
+import { PatientService} from '../../core/services/patient.service';
 
 @Component({
     selector: 'app-care-profile',
@@ -28,11 +21,10 @@ export class CareProfile implements OnInit {
     profileNotCreated = false;
     errorMessage = '';
 
-    isEditing = false;
-
     constructor(
         private readonly patientService: PatientService,
-        private readonly changeDetectorRef: ChangeDetectorRef
+        private readonly changeDetectorRef: ChangeDetectorRef,
+        private readonly router: Router
     ) {}
 
     ngOnInit(): void {
@@ -88,11 +80,6 @@ export class CareProfile implements OnInit {
             });
     }
 
-
-    startEditing(): void {
-        this.isEditing = true;
-    }
-
     formatGender(gender: string | null): string {
         if (!gender) {
             return 'Not provided';
@@ -125,5 +112,17 @@ export class CareProfile implements OnInit {
         };
 
         return labels[bloodType] ?? bloodType;
+    }
+
+    createProfile(): void {
+        this.router.navigate([
+            '/parent/care-profile/create'
+        ]);
+    }
+
+    editProfile(): void {
+        this.router.navigate([
+            '/parent/care-profile/edit'
+        ]);
     }
 }

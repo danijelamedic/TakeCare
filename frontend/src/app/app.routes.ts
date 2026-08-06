@@ -6,6 +6,8 @@ import { ParentHome } from './features/parent-home/parent-home';
 import { ParentLayout } from './layouts/parent-layout/parent-layout';
 import { authGuard } from './core/guards/auth.guard';
 import { CareProfile } from './features/care-profile/care-profile';
+import { CareProfileForm } from './features/care-profile/care-profile-form/care-profile-form';
+import { CaregiverProfile } from './features/caregiver-profile/caregiver-profile';
 
 export const routes: Routes = [
     {
@@ -40,9 +42,30 @@ export const routes: Routes = [
                 title: 'Home | TakeCare'
             },
             {
+                path: 'care-profile/create',
+                component: CareProfileForm,
+                title: 'Create care profile | TakeCare',
+                data: {
+                    mode: 'create'
+                }
+            },
+            {
+                path: 'care-profile/edit',
+                component: CareProfileForm,
+                title: 'Edit care profile | TakeCare',
+                data: {
+                    mode: 'edit'
+                }
+            },
+            {
                 path: 'care-profile',
                 component: CareProfile,
                 title: 'Care profile | TakeCare'
+            },
+            {
+                path: 'profile',
+                component: CaregiverProfile,
+                title: 'My profile | TakeCare'
             }
         ]
     },
