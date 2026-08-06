@@ -120,6 +120,8 @@ export class CareProfileForm implements OnInit {
           emergencyContactPhone: [''],
           bloodType: ['UNKNOWN'],
           allergies: [''],
+          chronicDiseases: [''],
+          diagnoses: [''],
           specialNeeds: [''],
           importantInformation: [''],
           generalNotes: ['']
@@ -181,6 +183,10 @@ export class CareProfileForm implements OnInit {
                         bloodType:
                             patient.bloodType ?? 'UNKNOWN',
                         allergies: patient.allergies ?? '',
+                        chronicDiseases:
+                            patient.chronicDiseases ?? '',
+                        diagnoses:
+                            patient.diagnoses ?? '',
                         specialNeeds: patient.specialNeeds ?? '',
                         importantInformation:
                             patient.importantInformation ?? '',
@@ -242,6 +248,10 @@ export class CareProfileForm implements OnInit {
                 this.toNullableValue(formValue.bloodType),
             allergies:
                 this.toNullableValue(formValue.allergies),
+            chronicDiseases:
+                this.toNullableValue(formValue.chronicDiseases),
+            diagnoses:
+                this.toNullableValue(formValue.diagnoses),
             specialNeeds:
                 this.toNullableValue(formValue.specialNeeds),
             importantInformation: this.toNullableValue(

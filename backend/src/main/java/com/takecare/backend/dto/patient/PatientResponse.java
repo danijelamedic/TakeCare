@@ -19,38 +19,23 @@ import java.time.LocalDateTime;
 public class PatientResponse {
 
     private Long id;
-
     private String firstName;
-
     private String lastName;
-
     private LocalDate dateOfBirth;
-
     private Gender gender;
-
     private String profileImage;
-
     private String address;
-
     private String emergencyContactName;
-
     private String emergencyContactPhone;
-
     private BloodType bloodType;
-
     private String allergies;
-
     private String specialNeeds;
-
     private String importantInformation;
-
     private String generalNotes;
-
     private Long parentId;
-
     private Long supportCoordinatorId;
-
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
+    private String chronicDiseases;
+    private String diagnoses;
 }

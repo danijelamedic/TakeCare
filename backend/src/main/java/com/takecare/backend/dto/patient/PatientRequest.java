@@ -29,22 +29,15 @@ public class PatientRequest {
     private LocalDate dateOfBirth;
 
     private Gender gender;
-
     private String profileImage;
-
     private String address;
-
     private String emergencyContactName;
-
     private String emergencyContactPhone;
-
     private BloodType bloodType;
-
     private String allergies;
-
     private String specialNeeds;
-
     private String importantInformation;
-
     private String generalNotes;
+    private String chronicDiseases;
+    private String diagnoses;
 }

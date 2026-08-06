@@ -45,6 +45,8 @@ public class PatientService {
                 .specialNeeds(request.getSpecialNeeds())
                 .importantInformation(request.getImportantInformation())
                 .generalNotes(request.getGeneralNotes())
+                .chronicDiseases(request.getChronicDiseases())
+                .diagnoses(request.getDiagnoses())
                 .parent(currentUser)
                 .build();
 
@@ -85,6 +87,8 @@ public class PatientService {
         patient.setBloodType(request.getBloodType());
         patient.setAllergies(request.getAllergies());
         patient.setSpecialNeeds(request.getSpecialNeeds());
+        patient.setChronicDiseases(request.getChronicDiseases());
+        patient.setDiagnoses(request.getDiagnoses());
         patient.setImportantInformation(request.getImportantInformation());
         patient.setGeneralNotes(request.getGeneralNotes());
 
@@ -124,6 +128,8 @@ public class PatientService {
                 .allergies(patient.getAllergies())
                 .specialNeeds(patient.getSpecialNeeds())
                 .importantInformation(patient.getImportantInformation())
+                .chronicDiseases(patient.getChronicDiseases())
+                .diagnoses(patient.getDiagnoses())
                 .generalNotes(patient.getGeneralNotes())
                 .parentId(
                         patient.getParent() != null
