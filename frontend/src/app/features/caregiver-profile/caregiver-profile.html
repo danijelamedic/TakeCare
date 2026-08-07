@@ -1,0 +1,164 @@
+<section class="caregiver-profile-page">
+    @if (isLoading) {
+    <div class="state-card">
+        <p>Loading your profile...</p>
+    </div>
+    } @else if (!user) {
+    <div class="state-card state-card--error">
+        <p>
+            {{ errorMessage || 'Your profile could not be loaded.' }}
+        </p>
+    </div>
+    } @else {
+    <div class="profile-header">
+        <div class="profile-identity">
+            <div class="profile-avatar">
+                {{ initials }}
+            </div>
+
+            <div>
+                <p class="eyebrow">My profile</p>
+
+                <h1>
+                    {{ user.firstName }}
+                    {{ user.lastName }}
+                </h1>
+
+                <p class="role-label">
+                    {{ formatRole(user.role) }}
+                </p>
+            </div>
+        </div>
+
+        @if (!isEditing) {
+        <button type="button" class="primary-button" (click)="startEditing()">
+            Edit profile
+        </button>
+        }
+    </div>
+
+    @if (successMessage) {
+    <div class="message message--success">
+        {{ successMessage }}
+    </div>
+    }
+
+    @if (errorMessage) {
+    <div class="message message--error">
+        {{ errorMessage }}
+    </div>
+    }
+
+    <article class="profile-card">
+        <div class="card-heading">
+            <h2>Personal information</h2>
+
+            @if (isEditing) {
+            <p>
+                Update your first name and last name.
+            </p>
+            }
+        </div>
+
+        @if (!isEditing) {
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">
+                    First name
+                </span>
+
+                <strong>
+                    {{ user.firstName }}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    Last name
+                </span>
+
+                <strong>
+                    {{ user.lastName }}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    Email
+                </span>
+
+                <strong>
+                    {{ user.email }}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">
+                    Account type
+                </span>
+
+                <strong>
+                    {{ formatRole(user.role) }}
+                </strong>
+            </div>
+        </div>
+        } @else {
+        <form class="profile-form" (ngSubmit)="saveProfile()">
+            <div class="form-grid">
+                <div class="form-field">
+                    <label for="firstName">
+                        First name
+                    </label>
+
+                    <input id="firstName" name="firstName" type="text" maxlength="100" autocomplete="given-name"
+                        [(ngModel)]="editFirstName" required />
+                </div>
+
+                <div class="form-field">
+                    <label for="lastName">
+                        Last name
+                    </label>
+
+                    <input id="lastName" name="lastName" type="text" maxlength="100" autocomplete="family-name"
+                        [(ngModel)]="editLastName" required />
+                </div>
+
+                <div class="form-field">
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input id="email" type="email" [value]="user.email" disabled />
+
+                    <span class="field-hint">
+                        Email cannot be changed here.
+                    </span>
+                </div>
+
+                <div class="form-field">
+                    <label for="role">
+                        Account type
+                    </label>
+
+                    <input id="role" type="text" [value]="formatRole(user.role)" disabled />
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="secondary-button" [disabled]="isSaving" (click)="cancelEditing()">
+                    Cancel
+                </button>
+
+                <button type="submit" class="primary-button" [disabled]="isSaving">
+                    @if (isSaving) {
+                    Saving...
+                    } @else {
+                    Save changes
+                    }
+                </button>
+            </div>
+        </form>
+        }
+    </article>
+    }
+</section>

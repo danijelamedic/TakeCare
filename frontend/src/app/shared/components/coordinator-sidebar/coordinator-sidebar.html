@@ -1,0 +1,40 @@
+<aside class="sidebar">
+    <div class="sidebar-brand">
+        <img src="logo.png" alt="TakeCare logo" class="sidebar-logo" />
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Coordinator navigation">
+        <a routerLink="/coordinator" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+            class="nav-item">
+            <span class="nav-icon">⌂</span>
+            <span>Dashboard</span>
+        </a>
+
+        <a routerLink="/coordinator/patient" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">♡</span>
+            <span>Assigned patient</span>
+        </a>
+
+        <a routerLink="/coordinator/appointments" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">◷</span>
+            <span>Appointments</span>
+        </a>
+
+        <a routerLink="/coordinator/documents" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">▤</span>
+            <span>Documents</span>
+        </a>
+
+        <a routerLink="/coordinator/profile" routerLinkActive="active" class="nav-item">
+            <span class="nav-icon">○</span>
+            <span>My profile</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <button type="button" class="logout-button" (click)="signOut()">
+            <span class="nav-icon">↪</span>
+            <span>Sign out</span>
+        </button>
+    </div>
+</aside>
