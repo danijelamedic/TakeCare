@@ -54,4 +54,11 @@ export class CoordinatorService {
             {}
         );
     }
+
+    getAssignedCoordinator():
+        Observable<CoordinatorResponse> {
+        return this.http.get<CoordinatorResponse>(
+            `${this.api}/assigned`
+        );
+    }
 }

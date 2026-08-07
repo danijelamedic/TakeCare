@@ -83,4 +83,16 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(Map.of("message", exception.getMessage()));
     }
+
+    @ExceptionHandler(CareProfileRequiredException.class)
+    public ResponseEntity<Map<String, String>> handleCareProfileRequired(
+            CareProfileRequiredException exception
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of(
+                        "message",
+                        exception.getMessage()
+                ));
+    }
 }

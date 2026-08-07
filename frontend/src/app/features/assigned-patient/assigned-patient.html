@@ -1,13 +1,22 @@
 <section class="care-profile-page">
     @if (isLoading) {
-    <div class="state-card">
-        <p>Loading care profile...</p>
-    </div>
-    } @else if (errorMessage) {
-    <div class="state-card state-card--error">
-        <p>{{ errorMessage }}</p>
-    </div>
-    } @else if (patient) {
+        <div class="state-card">
+            <p>Loading coordinator information...</p>
+        </div>
+    } @else {
+        @if (errorMessage) {
+            <div class="alert alert--error">
+                {{ errorMessage }}
+            </div>
+        }
+
+        @if (successMessage) {
+            <div class="alert alert--success">
+                {{ successMessage }}
+            </div>
+        }
+
+        @if (patient) {
     <div class="profile-header">
         <div class="profile-identity">
             <div class="profile-avatar">
@@ -209,5 +218,111 @@
             </div>
         </article>
     </div>
-    }
+        } @else if (pendingRequests.length > 0) {
+            <section class="requests-section">
+                <div class="requests-header">
+                    <div>
+            
+                        <h1>Choose your assigned patient</h1>
+            
+                        <p>
+                            Review requests sent by caregivers.
+                            Accepting a request will connect you
+                            with that patient's care profile.
+                        </p>
+                    </div>
+<!--             
+                    <div class="request-count">
+                        <strong>
+                            {{ pendingRequests.length }}
+                        </strong>
+            
+                        <span>
+                            Pending
+                            {{
+                            pendingRequests.length === 1
+                            ? 'request'
+                            : 'requests'
+                            }}
+                        </span>
+                    </div> -->
+                </div>
+            
+                <div class="request-list">
+                    @for (
+                    request of pendingRequests;
+                    track request.id
+                    ) {
+                    <article class="request-card">
+                        <div class="request-patient">
+                            <div class="request-avatar">
+                                {{
+                                getInitials(
+                                request.patientFirstName,
+                                request.patientLastName
+                                )
+                                }}
+                            </div>
+            
+                            <div class="request-details">
+                                <strong>{{ request.patientFirstName }} {{ request.patientLastName}}</strong>
+                            
+                                <span class="request-date">
+                                    Request sent {{ formatDate(request.createdAt) }}
+                                </span>
+                            
+                                <span class="request-status">
+                                    Pending
+                                </span>
+                            </div>
+                        </div>
+            
+                        <!-- <span class="status-badge status-badge--pending">
+                            Pending
+                        </span> -->
+            
+                        <div class="request-actions">
+                            <button type="button" class="secondary-button" [disabled]="processingRequestId !== null"
+                                (click)="declineRequest(request.id)">
+                                @if (
+                                processingRequestId === request.id
+                                ) {
+                                Processing...
+                                } @else {
+                                Decline
+                                }
+                            </button>
+            
+                            <button type="button" class="primary-button" [disabled]="processingRequestId !== null"
+                                (click)="acceptRequest(request.id)">
+                                @if (
+                                processingRequestId === request.id
+                                ) {
+                                Processing...
+                                } @else {
+                                Accept request
+                                }
+                            </button>
+                        </div>
+                    </article>
+                    }
+                </div>
+            </section>
+            } @else {
+                <div class="state-card empty-state">
+                    <div class="empty-state__icon">
+                        ♡
+                    </div>
+                
+                    <div>
+                        <h1>No assigned patient</h1>
+                
+                        <p>
+                            You do not currently have an assigned patient.
+                            New caregiver connection requests will appear here.
+                        </p>
+                    </div>
+                </div>
+            }
+        }
 </section>

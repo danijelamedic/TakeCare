@@ -23,3 +23,8 @@ export interface AuthResponse {
     tokenType: string;
     user: UserResponse;
 }
+
+export interface UpdateUserProfileRequest {
+    firstName: string;
+    lastName: string;
+}

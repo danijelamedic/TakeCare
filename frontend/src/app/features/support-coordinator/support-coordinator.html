@@ -1,11 +1,24 @@
 <section class="support-coordinator-page">
     <div class="page-header">
-        <h1>Connect a support coordinator</h1>
+        @if (assignedCoordinator) {
+        <h1>Your support coordinator</h1>
+    
+        <p class="page-description">
+            View the support coordinator assigned to your child's care profile.
+        </p>
+        } @else {
+        <h1>Connect with support coordinator</h1>
+    
+        <p class="page-description">
+            Choose an available support coordinator
+            for your child's care profile.
+        </p>
+        }
     </div>
 
     @if (isLoading) {
     <div class="state-card">
-        Loading available coordinators...
+        Loading support coordinator information...
     </div>
     } @else {
     @if (errorMessage) {
@@ -20,7 +33,81 @@
     </div>
     }
 
-    @if (coordinators.length === 0) {
+    @if (!hasCareProfile) {
+    <div class="state-card care-profile-required">
+        <div class="required-icon">
+            ♡
+        </div>
+
+        <div class="required-content">
+            <h2>Create a care profile first</h2>
+
+            <p>
+                Create your child's care profile first. Once it has been created, you will be able to connect with a support
+                coordinator.
+            </p>
+
+            <a class="primary-button primary-button--link" routerLink="/parent/care-profile/create">
+                Create care profile
+            </a>
+        </div>
+    </div>
+
+    } @else if (assignedCoordinator) {
+    <article class="assigned-coordinator-card">
+        <div class="assigned-coordinator-card__header">
+            <div class="coordinator-avatar coordinator-avatar--large">
+                {{ assignedCoordinator.firstName.charAt(0) }}
+                {{ assignedCoordinator.lastName.charAt(0) }}
+            </div>
+    
+            <div>
+    
+                <h2>
+                    {{ assignedCoordinator.firstName }}
+                    {{ assignedCoordinator.lastName }}
+                </h2>
+    
+                <p class="coordinator-email">
+                    {{ assignedCoordinator.email }}
+                </p>
+            </div>
+        </div>
+    
+        <div class="assigned-coordinator-info">
+            <div class="info-item">
+                <span class="info-label">
+                    First name
+                </span>
+    
+                <strong>
+                    {{ assignedCoordinator.firstName }}
+                </strong>
+            </div>
+    
+            <div class="info-item">
+                <span class="info-label">
+                    Last name
+                </span>
+    
+                <strong>
+                    {{ assignedCoordinator.lastName }}
+                </strong>
+            </div>
+    
+            <div class="info-item info-item--full">
+                <span class="info-label">
+                    Email
+                </span>
+    
+                <strong>
+                    {{ assignedCoordinator.email }}
+                </strong>
+            </div>
+        </div>
+    
+    </article>
+    } @else if (coordinators.length === 0) {
     <div class="state-card">
         <h2>No coordinators available</h2>
 
@@ -65,7 +152,9 @@
                         {{ coordinator.lastName }}
                     </strong>
 
-                    <span>{{ coordinator.email }}</span>
+                    <span>
+                        {{ coordinator.email }}
+                    </span>
                 </span>
             </label>
             }

@@ -1,30 +1,13 @@
 <section class="coordinator-home-page">
     <div class="page-header">
         <div>
-            <h1>
-                Support Coordinator dashboard
-            </h1>
+            <h1>Support Coordinator dashboard</h1>
 
             <p class="page-description">
-                Review connection requests from caregivers
-                and manage your assigned patient.
+                Review your assigned patient and manage
+                caregiver connection requests.
             </p>
         </div>
-
-        @if (!isLoading && !assignedPatient) {
-        <div class="request-count">
-            <strong>{{ pendingRequests.length }}</strong>
-
-            <span>
-                Pending
-                {{
-                pendingRequests.length === 1
-                ? 'request'
-                : 'requests'
-                }}
-            </span>
-        </div>
-        }
     </div>
 
     @if (errorMessage) {
@@ -33,187 +16,144 @@
     </div>
     }
 
-    @if (successMessage) {
-    <div class="alert alert--success">
-        {{ successMessage }}
-    </div>
-    }
-
     @if (isLoading) {
     <div class="state-card">
         Loading coordinator dashboard...
     </div>
-    } @else if (assignedPatient) {
+    } @else {
     <section class="dashboard-overview">
         <h2>Quick overview</h2>
-    
+
         <div class="dashboard-grid">
+            @if (assignedPatient) {
             <article class="dashboard-card dashboard-card--active">
                 <div class="dashboard-card__icon">
                     ♡
                 </div>
-    
+
                 <div class="dashboard-card__content">
                     <h3>Assigned patient</h3>
-    
+
                     <p>
-                        View the complete care profile of your assigned patient.
+                        View the complete care profile
+                        of your assigned patient.
                     </p>
-    
+
                     <div class="patient-preview">
                         <strong>
                             {{ assignedPatient.firstName }}
                             {{ assignedPatient.lastName }}
                         </strong>
-                    
+
                         <span>
-                            {{ assignedPatient.specialNeeds || 'Care profile' }}
+                            {{
+                            assignedPatient.specialNeeds ||
+                            'Care profile'
+                            }}
                         </span>
                     </div>
-    
+
                     <a class="dashboard-card__action" routerLink="/coordinator/patient">
                         View care profile
                     </a>
                 </div>
             </article>
-    
+            } @else {
+            <article class="dashboard-card dashboard-card--active">
+                <div class="dashboard-card__icon">
+                    ♡
+                </div>
+
+                <div class="dashboard-card__content">
+                    <h3>Connection requests</h3>
+
+                    @if (pendingRequests.length > 0) {
+                    <p>
+                        You have
+                        <strong>
+                            {{ pendingRequests.length }}
+                        </strong>
+
+                        pending
+                        {{
+                        pendingRequests.length === 1
+                        ? 'request'
+                        : 'requests'
+                        }}.
+                    </p>
+                    } @else {
+                    <p>
+                        There are currently no pending
+                        caregiver connection requests.
+                    </p>
+                    }
+
+                    <a class="dashboard-card__action" routerLink="/coordinator/patient">
+                        {{
+                        pendingRequests.length > 0
+                        ? 'Review requests'
+                        : 'Check connection requests'
+                        }}
+                    </a>
+                </div>
+            </article>
+            }
+
             <article class="dashboard-card dashboard-card--disabled">
                 <div class="dashboard-card__icon">
                     ◷
                 </div>
-    
+
                 <div class="dashboard-card__content">
                     <h3>Appointments</h3>
-    
+
                     <p>
                         Review upcoming visits and important dates.
                     </p>
-    
+
                     <span class="dashboard-card__action">
                         View schedule
                     </span>
                 </div>
             </article>
-    
+
             <article class="dashboard-card dashboard-card--disabled">
                 <div class="dashboard-card__icon">
                     +
                 </div>
-    
+
                 <div class="dashboard-card__content">
                     <h3>Therapies</h3>
-    
+
                     <p>
-                        Review therapies, instructions and treatment schedules.
+                        Review therapies, instructions and
+                        treatment schedules.
                     </p>
-    
+
                     <span class="dashboard-card__action">
                         View therapies
                     </span>
                 </div>
             </article>
-    
+
             <article class="dashboard-card dashboard-card--disabled">
                 <div class="dashboard-card__icon">
                     ▤
                 </div>
-    
+
                 <div class="dashboard-card__content">
                     <h3>Documents</h3>
-    
+
                     <p>
-                        Access reports, results and other important files.
+                        Access reports, results and other
+                        important files.
                     </p>
-    
+
                     <span class="dashboard-card__action">
                         View documents
                     </span>
                 </div>
             </article>
-        </div>
-    </section>
-} @else if (pendingRequests.length === 0) {
-    <div class="state-card">
-        <div class="state-icon">✓</div>
-
-        <div>
-            <h2>No pending requests</h2>
-
-            <p>
-                New caregiver connection requests
-                will appear here.
-            </p>
-        </div>
-    </div>
-    } @else {
-    <section class="requests-section">
-        <div class="section-heading">
-            <h2>Connection requests</h2>
-
-            <p>
-                Accepting a request gives you access
-                to the patient's care information.
-            </p>
-        </div>
-
-        <div class="request-list">
-            @for (
-            request of pendingRequests;
-            track request.id
-            ) {
-            <article class="request-card">
-                <div class="patient-summary">
-                    <div class="patient-avatar">
-                        {{
-                        getInitials(
-                        request.patientFirstName,
-                        request.patientLastName
-                        )
-                        }}
-                    </div>
-
-                    <div class="patient-details">
-                        <span class="request-label">
-                            Care profile
-                        </span>
-
-                        <h3>
-                            {{ request.patientFirstName }}
-                            {{ request.patientLastName }}
-                        </h3>
-
-                        <p>
-                            Request sent
-                            {{ formatDate(request.createdAt) }}
-                        </p>
-                    </div>
-                </div>
-
-                <div class="request-status">
-                    Pending
-                </div>
-
-                <div class="request-actions">
-                    <button type="button" class="secondary-button" [disabled]="processingRequestId !== null"
-                        (click)="declineRequest(request.id)">
-                        {{
-                        processingRequestId === request.id
-                        ? 'Processing...'
-                        : 'Decline'
-                        }}
-                    </button>
-
-                    <button type="button" class="primary-button" [disabled]="processingRequestId !== null"
-                        (click)="acceptRequest(request.id)">
-                        {{
-                        processingRequestId === request.id
-                        ? 'Processing...'
-                        : 'Accept request'
-                        }}
-                    </button>
-                </div>
-            </article>
-            }
         </div>
     </section>
     }

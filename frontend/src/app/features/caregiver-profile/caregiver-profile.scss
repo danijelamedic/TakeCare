@@ -12,6 +12,7 @@
 .profile-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 22px;
     margin-bottom: 24px;
     padding: 30px;
@@ -131,7 +132,12 @@
 
     .profile-header {
         align-items: flex-start;
+        flex-direction: column;
         padding: 22px;
+    }
+
+    .profile-identity {
+        align-items: flex-start;
     }
 
     .profile-avatar {
@@ -145,7 +151,162 @@
         font-size: 27px;
     }
 
-    .details-grid {
+    .details-grid,
+    .form-grid {
         grid-template-columns: 1fr;
     }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .primary-button,
+    .secondary-button {
+        width: 100%;
+    }
+}
+
+.profile-identity {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+
+.card-heading {
+    margin-bottom: 22px;
+}
+
+.card-heading h2 {
+    margin: 0;
+    color: #08264a;
+    font-size: 20px;
+}
+
+.card-heading p {
+    margin: 7px 0 0;
+    color: #708399;
+    font-size: 14px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-field label {
+    color: #36596c;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.form-field input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 14px;
+
+    border: 1px solid #cbdde3;
+    border-radius: 12px;
+
+    background: #ffffff;
+    color: #09264a;
+
+    font: inherit;
+    outline: none;
+
+    transition:
+        border-color 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.form-field input:focus {
+    border-color: #62afb7;
+    box-shadow: 0 0 0 3px rgba(98, 175, 183, 0.14);
+}
+
+.form-field input:disabled {
+    background: #f3f6f7;
+    color: #708399;
+    cursor: not-allowed;
+}
+
+.field-hint {
+    color: #7b8d9f;
+    font-size: 12px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.primary-button,
+.secondary-button {
+    padding: 12px 18px;
+    border-radius: 12px;
+
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.primary-button {
+    border: none;
+    background: #0f6f91;
+    color: #ffffff;
+}
+
+.primary-button:hover:not(:disabled) {
+    background: #0b607e;
+    transform: translateY(-1px);
+}
+
+.secondary-button {
+    border: 1px solid #c7d9df;
+    background: #ffffff;
+    color: #315467;
+}
+
+.secondary-button:hover:not(:disabled) {
+    background: #f4f8f9;
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.message {
+    margin-bottom: 16px;
+    padding: 13px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+}
+
+.message--success {
+    border: 1px solid #b9dfcf;
+    background: #f0fbf6;
+    color: #287056;
+}
+
+.message--error {
+    border: 1px solid #f1c6c6;
+    background: #fff8f8;
+    color: #a53939;
 }

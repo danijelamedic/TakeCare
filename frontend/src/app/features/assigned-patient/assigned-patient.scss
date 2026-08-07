@@ -305,3 +305,263 @@
         width: 100%;
     }
 }
+
+.alert {
+    margin-bottom: 1rem;
+    padding: 0.9rem 1rem;
+    border-radius: 0.85rem;
+    font-size: 0.9rem;
+}
+
+.alert--error {
+    border: 1px solid #f1c6c6;
+    background: #fff8f8;
+    color: #a53939;
+}
+
+.alert--success {
+    border: 1px solid #b9dfcf;
+    background: #f0fbf6;
+    color: #287056;
+}
+
+.requests-section {
+    padding: 1.75rem;
+    border: 1px solid rgba(38, 95, 121, 0.1);
+    border-radius: 1.25rem;
+    background: #ffffff;
+    box-shadow: 0 12px 30px rgba(30, 69, 91, 0.06);
+}
+
+.requests-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.requests-header h1 {
+    margin: 0;
+    color: #15344a;
+    font-size: clamp(1.7rem, 3vw, 2.2rem);
+}
+
+.requests-header p:not(.eyebrow) {
+    max-width: 650px;
+    margin: 0.6rem 0 0;
+    color: #667f8c;
+    line-height: 1.6;
+}
+
+.request-count {
+    min-width: 135px;
+    padding: 1rem;
+    border: 1px solid #dbe5ed;
+    border-radius: 1rem;
+    background: #f8fafb;
+    text-align: center;
+}
+
+.request-count strong {
+    display: block;
+    color: #15344a;
+    font-size: 1.75rem;
+    line-height: 1;
+}
+
+.request-count span {
+    display: block;
+    margin-top: 0.4rem;
+    color: #667f8c;
+    font-size: 0.82rem;
+}
+
+.request-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.request-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    background: #fbfcfd;
+}
+
+.request-patient {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.request-avatar {
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #dff7f8, #eee8fb);
+    color: #416e86;
+    font-weight: 800;
+}
+
+.request-label {
+    color: #2c7da0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+}
+
+.request-patient h2 {
+    margin: 0.25rem 0 0;
+    color: #15344a;
+    font-size: 1.1rem;
+}
+
+.request-patient p {
+    margin: 0.35rem 0 0;
+    color: #718995;
+    font-size: 0.85rem;
+}
+
+.request-status {
+    padding: 0.45rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #8a99a8;
+}
+
+.request-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.request-date {
+    color: #71889b;
+    font-size: 0.9rem;
+}
+
+.request-status {
+    align-self: flex-start;
+    margin-top: 0.25rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    background: #fff8e6;
+    color: #b77a00;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+
+.request-actions {
+    display: flex;
+    gap: 0.65rem;
+}
+
+.secondary-button {
+    border: 1px solid #cbdde3;
+    border-radius: 0.8rem;
+    padding: 0.8rem 1.2rem;
+    background: #ffffff;
+    color: #315467;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.secondary-button:hover:not(:disabled) {
+    background: #f4f8f9;
+}
+
+.primary-button:disabled,
+.secondary-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.empty-state {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.empty-state__icon {
+    width: 58px;
+    height: 58px;
+    flex: 0 0 58px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: #e3f4f5;
+    color: #397f89;
+    font-size: 1.4rem;
+    font-weight: 800;
+}
+
+.empty-state h1 {
+    margin: 0;
+}
+
+.empty-state p {
+    margin: 0.5rem 0 0;
+    line-height: 1.6;
+}
+
+@media (max-width: 850px) {
+    .request-card {
+        grid-template-columns: 1fr;
+    }
+
+    .request-status {
+        justify-self: flex-start;
+    }
+
+    .request-actions {
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 700px) {
+    .requests-header {
+        flex-direction: column;
+    }
+
+    .request-count {
+        width: 100%;
+        box-sizing: border-box;
+        text-align: left;
+    }
+
+    .request-actions {
+        flex-direction: column-reverse;
+    }
+
+    .request-actions .primary-button,
+    .request-actions .secondary-button {
+        width: 100%;
+    }
+
+    .empty-state {
+        align-items: flex-start;
+    }
+}
