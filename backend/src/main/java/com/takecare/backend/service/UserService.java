@@ -1,6 +1,7 @@
 package com.takecare.backend.service;
 
 import com.takecare.backend.dto.auth.UserResponse;
+import com.takecare.backend.dto.user.UpdateUserProfileRequest;
 import com.takecare.backend.model.User;
 import com.takecare.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,5 +57,19 @@ public class UserService {
                 user.getEmail(),
                 user.getRole()
         );
+    }
+
+    @Transactional
+    public UserResponse updateCurrentUserProfile(
+            UpdateUserProfileRequest request
+    ) {
+        User currentUser = getCurrentUser();
+
+        currentUser.setFirstName(request.getFirstName());
+        currentUser.setLastName(request.getLastName());
+
+        User updatedUser = userRepository.save(currentUser);
+
+        return mapToResponse(updatedUser);
     }
 }

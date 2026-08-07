@@ -1,6 +1,7 @@
 package com.takecare.backend.service;
 
 import com.takecare.backend.dto.coordinator.CoordinatorConnectionResponse;
+import com.takecare.backend.exception.CareProfileRequiredException;
 import com.takecare.backend.model.CoordinatorConnectionRequest;
 import com.takecare.backend.model.Patient;
 import com.takecare.backend.model.User;
@@ -39,8 +40,8 @@ public class CoordinatorConnectionRequestService {
         }
 
         Patient patient = patientRepository.findByParent(currentUser)
-                .orElseThrow(() -> new IllegalStateException(
-                        "The current parent does not have a patient profile"
+                .orElseThrow(() -> new CareProfileRequiredException(
+                        "Create a care profile before sending a coordinator connection request"
                 ));
 
         if (patient.getSupportCoordinator() != null) {

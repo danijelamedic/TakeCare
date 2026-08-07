@@ -92,6 +92,11 @@ export const routes: Routes = [
                 path: 'patient',
                 component: AssignedPatient,
                 title: 'Assigned patient | TakeCare'
+            },
+            {
+                path: 'profile',
+                component: CaregiverProfile,
+                title: 'My profile | TakeCare'
             }
         ]
     },

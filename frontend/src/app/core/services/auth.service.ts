@@ -3,12 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import {
-    AuthResponse,
-    LoginRequest,
-    RegisterRequest,
-    UserResponse
-} from '../models/auth.models';
+import { AuthResponse, LoginRequest, RegisterRequest, UserResponse} from '../models/auth.models';
 
 @Injectable({
     providedIn: 'root'
@@ -66,6 +61,13 @@ export class AuthService {
         }
     }
 
+    updateStoredUser(user: UserResponse): void {
+        localStorage.setItem(
+            this.userKey,
+            JSON.stringify(user)
+        );
+    }
+
     isLoggedIn(): boolean {
         return Boolean(
             this.getToken() &&
@@ -80,4 +82,5 @@ export class AuthService {
             JSON.stringify(response.user)
         );
     }
+    
 }
