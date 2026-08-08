@@ -1,0 +1,388 @@
+<section class="diary-page">
+
+    <header class="diary-header">
+        <div>
+            <h1>Diary</h1>
+            <p class="header-description">
+                Keep important moments, health updates and daily notes
+                in one safe place.
+            </p>
+        </div>
+
+        <button class="primary-button" type="button" [disabled]="patientId === null" (click)="openCreateForm()">
+            <span class="button-icon">+</span>
+            Add entry
+        </button>
+    </header>
+
+    @if (successMessage) {
+    <div class="message success-message">
+        <span>✓</span>
+        {{ successMessage }}
+    </div>
+    }
+
+    @if (errorMessage) {
+    <div class="message error-message">
+        <span>!</span>
+        {{ errorMessage }}
+    </div>
+    }
+
+    @if (isFormOpen) {
+    <section class="entry-form-card">
+
+        <div class="form-header">
+            <div>
+                <p class="eyebrow">
+                    {{ isEditing ? 'EDIT NOTE' : 'NEW NOTE' }}
+                </p>
+
+                <h2>
+                    {{ isEditing
+                    ? 'Edit diary entry'
+                    : 'Add diary entry'
+                    }}
+                </h2>
+            </div>
+
+            <button class="close-button" type="button" aria-label="Close form" (click)="closeForm()">
+                ×
+            </button>
+        </div>
+
+        <form class="entry-form" [formGroup]="diaryForm" (ngSubmit)="saveEntry()">
+            <div class="form-grid">
+
+                <div class="form-field full-width">
+                    <label for="diary-title">
+                        Title
+                        <span class="required">*</span>
+                    </label>
+
+                    <input id="diary-title" type="text" formControlName="title" maxlength="150"
+                        placeholder="For example: Visit to the doctor" />
+
+                    <div class="field-footer">
+                        <div>
+                            @if (
+                            titleControl!.touched &&
+                            titleControl!.hasError('required')
+                            ) {
+                            <span class="validation-message">
+                                Title is required.
+                            </span>
+                            }
+                        </div>
+
+                        <span class="character-counter">
+                            {{ titleControl.value?.length || 0 }}/150
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="entry-type">
+                        Entry type
+                        <span class="required">*</span>
+                    </label>
+
+                    <select id="entry-type" formControlName="entryType">
+                        @for (type of entryTypes; track type) {
+                        <option [value]="type">
+                            {{ getTypeLabel(type) }}
+                        </option>
+                        }
+                    </select>
+                </div>
+
+
+                @if (!isCoordinator) {
+                <div class="form-field full-width">
+                    <label>Visibility</label>
+
+                    <div class="visibility-options">
+
+                        <label class="visibility-option">
+                            <input type="radio" formControlName="visibility" [value]="'PRIVATE_TO_PARENT'" />
+
+                            <span class="visibility-card">
+                                <span class="visibility-icon">○</span>
+
+                                <span>
+                                    <strong>Private</strong>
+                                    <small>
+                                        Only you can see this entry
+                                    </small>
+                                </span>
+                            </span>
+                        </label>
+
+                        <label class="visibility-option">
+                            <input type="radio" formControlName="visibility" [value]="'SHARED'" />
+
+                            <span class="visibility-card">
+                                <span class="visibility-icon">↗</span>
+
+                                <span>
+                                    <strong>Shared</strong>
+                                    <small>
+                                        Your coordinator can also see it
+                                    </small>
+                                </span>
+                            </span>
+                        </label>
+
+                    </div>
+                </div>
+                } @else {
+                <div class="coordinator-notice full-width">
+                    <span>↗</span>
+
+                    <p>
+                        Notes created by a support coordinator are
+                        automatically shared with the parent.
+                    </p>
+                </div>
+                }
+
+                <div class="form-field full-width">
+                    <label for="entry-content">
+                        Note
+                        <span class="required">*</span>
+                    </label>
+
+                    <textarea id="entry-content" formControlName="content" rows="7" maxlength="5000"
+                        placeholder="Write the details you would like to remember..."></textarea>
+
+                    <div class="field-footer">
+                        <div>
+                            @if (
+                            contentControl!.touched &&
+                            contentControl!.hasError('required')
+                            ) {
+                            <span class="validation-message">
+                                Note content is required.
+                            </span>
+                            }
+                        </div>
+
+                        <span class="character-counter">
+                            {{ contentControl.value?.length || 0 }}/5000
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <button class="secondary-button" type="button" (click)="closeForm()">
+                    Cancel
+                </button>
+
+                <button class="primary-button" type="submit" [disabled]="isSaving">
+                    @if (isSaving) {
+                    Saving...
+                    } @else {
+                    {{ isEditing ? 'Save changes' : 'Add entry' }}
+                    }
+                </button>
+            </div>
+        </form>
+    </section>
+    }
+
+    <section class="diary-toolbar">
+        <div class="toolbar-heading">
+            <div class="toolbar-icon">🕮</div>
+
+            <div>
+                <h2>Diary entries</h2>
+
+                <p>
+                    {{ filteredEntries.length }}
+                    {{ filteredEntries.length === 1 ? 'entry' : 'entries' }}
+                    displayed
+                </p>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-field type-filter">
+                <label for="type-filter">Entry type</label>
+
+                <select id="type-filter" [value]="selectedType" (change)="onTypeFilterChange($event)">
+                    <option value="ALL">All entries</option>
+
+                    @for (type of entryTypes; track type) {
+                    <option [value]="type">
+                        {{ getTypeLabel(type) }}
+                    </option>
+                    }
+                </select>
+            </div>
+
+            <div class="filter-field date-filter">
+                <label for="date-filter">Entry date</label>
+
+                <div class="date-filter-control">
+                    <input id="date-filter" type="date" [value]="selectedDate" (change)="onDateFilterChange($event)" />
+
+                    @if (selectedDate) {
+                    <button class="clear-date-button" type="button" aria-label="Clear selected date"
+                        title="Clear selected date" (click)="clearDateFilter()">
+                        ×
+                    </button>
+                    }
+                </div>
+            </div>
+
+            @if (selectedType !== 'ALL' || selectedDate) {
+            <button class="clear-filters-button" type="button" (click)="clearAllFilters()">
+                Clear all
+            </button>
+            }
+        </div>
+    </section>
+
+    @if (isLoading) {
+    <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading diary entries...</p>
+    </div>
+    } @else if (
+    !errorMessage &&
+    filteredEntries.length === 0
+    ) {
+    <div class="empty-state">
+        <div class="empty-icon">▤</div>
+
+        <h2>
+            {{
+            selectedType === 'ALL' && !selectedDate
+            ? 'Your diary is ready'
+            : 'No matching entries'
+            }}
+        </h2>
+
+        <p>
+            {{
+            selectedType === 'ALL' && !selectedDate
+            ? 'Add the first entry and start keeping important moments in one place.'
+            : 'Try changing the selected category or date.'
+            }}
+        </p>
+
+        @if (selectedType === 'ALL' && !selectedDate) {
+        <button class="primary-button" type="button" [disabled]="patientId === null" (click)="openCreateForm()">
+            <span class="button-icon">+</span>
+            Add first entry
+        </button>
+        } @else {
+        <button class="secondary-button" type="button" (click)="clearAllFilters()">
+            Clear filters
+        </button>
+        }
+    </div>
+    } @else {
+    <div class="entries-grid">
+
+        @for (
+        entry of filteredEntries;
+        track trackEntry($index, entry)
+        ) {
+        <article class="entry-card" [ngClass]="getEntryClass(entry.entryType)">
+            <div class="entry-accent"></div>
+
+            <div class="entry-card-content">
+
+                <div class="entry-card-header">
+                    <div class="entry-type">
+                        <span class="entry-icon">
+                            {{ getEntryIcon(entry.entryType) }}
+                        </span>
+
+                        <span>
+                            {{ getTypeLabel(entry.entryType) }}
+                        </span>
+                    </div>
+
+                    <span class="visibility-badge" [class.shared]="
+                                    entry.visibility === 'SHARED'
+                                ">
+                        {{ getVisibilityLabel(entry.visibility) }}
+                    </span>
+                </div>
+
+                <h3>{{ entry.title }}</h3>
+
+                <p class="entry-content" [class.expanded]="isEntryExpanded(entry.id)">
+                    {{ entry.content }}
+                </p>
+                
+                @if (entry.content.length > 220) {
+                <button class="read-more-button" type="button" [attr.aria-expanded]="isEntryExpanded(entry.id)"
+                    (click)="toggleEntryContent(entry.id)">
+                    {{
+                    isEntryExpanded(entry.id)
+                    ? 'Show less'
+                    : 'Read more'
+                    }}
+                </button>
+                }
+
+                <div class="entry-meta">
+                    <span>
+                        {{
+                        entry.entryDate
+                        | date: 'dd MMMM yyyy'
+                        }}
+                    </span>
+
+                    <span>
+                        {{ entry.authorName }}
+                    </span>
+                </div>
+
+                @if (canModify(entry)) {
+                @if (pendingDeleteEntryId === entry.id) {
+                <div class="delete-confirmation">
+                    <p>Do you want to delete this entry?</p>
+                
+                    <div class="delete-confirmation-actions">
+                        <button class="cancel-delete-button" type="button" [disabled]="deletingEntryId === entry.id"
+                            (click)="cancelDelete()">
+                            No
+                        </button>
+                
+                        <button class="confirm-delete-button" type="button" [disabled]="deletingEntryId === entry.id"
+                            (click)="confirmDelete(entry)">
+                            {{
+                            deletingEntryId === entry.id
+                            ? 'Deleting...'
+                            : 'Yes, delete'
+                            }}
+                        </button>
+                    </div>
+                </div>
+                } @else {
+                <div class="entry-actions">
+                    <button class="edit-button" type="button" (click)="openEditForm(entry)">
+                        Edit
+                    </button>
+                
+                    <button class="delete-button" type="button" (click)="requestDelete(entry)">
+                        Delete
+                    </button>
+                </div>
+                }
+                }
+
+            </div>
+        </article>
+        }
+
+    </div>
+    }
+
+</section>

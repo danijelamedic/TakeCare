@@ -12,6 +12,7 @@ import { CoordinatorHome } from './features/coordinator-home/coordinator-home';
 import { CoordinatorLayout } from './layouts/coordinator-layout/coordinator-layout';
 import { SupportCoordinator } from './features/support-coordinator/support-coordinator';
 import { AssignedPatient } from './features/assigned-patient/assigned-patient';
+import { Diary } from './features/diary/diary';
 
 export const routes: Routes = [
     {
@@ -76,6 +77,10 @@ export const routes: Routes = [
                 component: SupportCoordinator,
                 title: 'Support coordinator | TakeCare'
             },
+            {
+                path: 'diary',
+                component: Diary
+            }
         ]
     },
     {
@@ -97,6 +102,10 @@ export const routes: Routes = [
                 path: 'profile',
                 component: CaregiverProfile,
                 title: 'My profile | TakeCare'
+            },
+            {
+                path: 'diary',
+                component: Diary
             }
         ]
     },
