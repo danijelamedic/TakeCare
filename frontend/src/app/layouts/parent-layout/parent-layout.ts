@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
 import { Sidebar } from '../../shared/components/sidebar/sidebar';
@@ -9,7 +9,8 @@ import { Sidebar } from '../../shared/components/sidebar/sidebar';
     standalone: true,
     imports: [
         RouterOutlet,
-        Sidebar
+        Sidebar,
+        RouterLink
     ],
     templateUrl: './parent-layout.html',
     styleUrl: './parent-layout.scss'
