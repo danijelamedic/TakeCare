@@ -4,9 +4,8 @@
 
 .care-profile-form-page {
     width: 100%;
-    max-width: 1160px;
+    max-width: 1040px;
     margin: 0 auto;
-    padding: 52px 36px 64px;
 }
 
 .form-page-header {
@@ -249,10 +248,6 @@
 }
 
 @media (max-width: 900px) {
-    .care-profile-form-page {
-        padding: 36px 24px 52px;
-    }
-
     .form-grid {
         grid-template-columns: 1fr;
     }
@@ -263,10 +258,6 @@
 }
 
 @media (max-width: 600px) {
-    .care-profile-form-page {
-        padding: 26px 16px 40px;
-    }
-
     .form-card {
         padding: 20px;
         border-radius: 16px;
