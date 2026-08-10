@@ -95,4 +95,81 @@ public class GlobalExceptionHandler {
                         exception.getMessage()
                 ));
     }
+
+    @ExceptionHandler(TherapyNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleTherapyNotFound(
+            TherapyNotFoundException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(TherapyIntakeNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleTherapyIntakeNotFound(
+            TherapyIntakeNotFoundException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(ProfessionalContactNotFoundException.class)
+    public ResponseEntity<Map<String, Object>>
+    handleProfessionalContactNotFound(
+            ProfessionalContactNotFoundException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(TherapyAccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleTherapyAccessDenied(
+            TherapyAccessDeniedException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.FORBIDDEN,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(InvalidTherapyDataException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidTherapyData(
+            InvalidTherapyDataException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(TherapyIntakeAlreadyRecordedException.class)
+    public ResponseEntity<Map<String, Object>>
+    handleTherapyIntakeAlreadyRecorded(
+            TherapyIntakeAlreadyRecordedException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                exception.getMessage()
+        );
+    }
+
+    private ResponseEntity<Map<String, Object>> buildErrorResponse(
+            HttpStatus status,
+            String message
+    ) {
+        Map<String, Object> body = new LinkedHashMap<>();
+
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("message", message);
+
+        return ResponseEntity
+                .status(status)
+                .body(body);
+    }
 }
