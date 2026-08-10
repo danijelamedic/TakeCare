@@ -1,0 +1,557 @@
+<section class="therapy-form-page">
+    @if (isLoading) {
+    <div class="state-card">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Loading therapy form...</p>
+    </div>
+    } @else if (errorMessage && !patientId) {
+    <div class="state-card error-state">
+        <div class="state-icon state-icon--error">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v6"></path>
+                <path d="M12 17h.01"></path>
+            </svg>
+        </div>
+
+        <h2>Form unavailable</h2>
+        <p>{{ errorMessage }}</p>
+
+        <button class="secondary-button" type="button" (click)="goBack()">
+            Go back
+        </button>
+    </div>
+    } @else {
+    <button class="back-button" type="button" (click)="goBack()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5"></path>
+            <path d="m12 19-7-7 7-7"></path>
+        </svg>
+    
+        <span>
+            {{ isEditMode ? 'Back to therapy' : 'Back to therapies' }}
+        </span>
+    </button>
+    
+    <header class="form-header">
+        <div class="header-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+                <g transform="rotate(-45 12 12)">
+                    <rect x="7" y="3.5" width="10" height="17" rx="5"></rect>
+    
+                    <path d="M7 12h10"></path>
+                </g>
+            </svg>
+        </div>
+    
+        <div class="header-copy">
+            <h1>{{ pageTitle }}</h1>
+    
+            <p>
+                @if (isEditMode) {
+                Update the therapy information and its schedules.
+                } @else {
+                Add therapy information and define when it should
+                be taken.
+                }
+            </p>
+        </div>
+    </header>
+
+    @if (errorMessage) {
+    <div class="alert alert--error" role="alert">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 7v6"></path>
+            <path d="M12 17h.01"></path>
+        </svg>
+
+        <span>{{ errorMessage }}</span>
+    </div>
+    }
+
+    @if (successMessage) {
+    <div class="alert alert--success" role="status">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="m8 12 2.5 2.5L16 9"></path>
+        </svg>
+
+        <span>{{ successMessage }}</span>
+    </div>
+    }
+
+    <form class="therapy-form" [formGroup]="therapyForm" (ngSubmit)="submitForm()" novalidate>
+        <article class="form-card">
+            <div class="section-heading">
+                <div class="section-icon">
+                    <svg viewBox="0 0 24 24">
+                        <g transform="rotate(-45 12 12)">
+                            <rect x="7" y="3.5" width="10" height="17" rx="5"></rect>
+                
+                            <path d="M7 12h10"></path>
+                        </g>
+                    </svg>
+                </div>
+
+                <div>
+                    <h2>Therapy information</h2>
+                    
+                </div>
+            </div>
+
+            <div class="fields-grid">
+                <div class="form-field full-width">
+                    <label for="therapy-name">
+                        Therapy name
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <input id="therapy-name" type="text" formControlName="name" maxlength="150"
+                        placeholder="For example, Amoxicillin" [class.input-invalid]="hasError('name')" />
+
+                    @if (hasError('name', 'required')) {
+                    <p class="field-error">
+                        Therapy name is required.
+                    </p>
+                    } @else if (hasError('name', 'maxlength')) {
+                    <p class="field-error">
+                        Therapy name cannot exceed 150 characters.
+                    </p>
+                    }
+                </div>
+
+                <div class="form-field full-width">
+                    <label for="therapy-description">
+                        Description
+                    </label>
+
+                    <textarea id="therapy-description" formControlName="description" rows="3" maxlength="1000"
+                        placeholder="Briefly describe the purpose of the therapy"
+                        [class.input-invalid]="hasError('description')"></textarea>
+
+                    @if (hasError('description', 'maxlength')) {
+                    <p class="field-error">
+                        Description cannot exceed 1000 characters.
+                    </p>
+                    }
+                </div>
+
+                <div class="form-field">
+                    <label for="therapy-dosage">
+                        Dosage
+                    </label>
+
+                    <input id="therapy-dosage" type="text" formControlName="dosage" maxlength="150"
+                        placeholder="For example, 500 mg" [class.input-invalid]="hasError('dosage')" />
+
+                    @if (hasError('dosage', 'maxlength')) {
+                    <p class="field-error">
+                        Dosage cannot exceed 150 characters.
+                    </p>
+                    }
+                </div>
+
+                <div class="form-field">
+                    <label for="therapy-frequency">
+                        General frequency
+                    </label>
+
+                    <input id="therapy-frequency" type="text" formControlName="frequency" maxlength="150"
+                        placeholder="For example, twice daily" [class.input-invalid]="hasError('frequency')" />
+
+                    @if (hasError('frequency', 'maxlength')) {
+                    <p class="field-error">
+                        Frequency cannot exceed 150 characters.
+                    </p>
+                    }
+                </div>
+
+                <div class="form-field full-width">
+                    <label for="therapy-instructions">
+                        General instructions
+                    </label>
+
+                    <textarea id="therapy-instructions" formControlName="instructions" rows="3" maxlength="1000"
+                        placeholder="For example, take after a meal"
+                        [class.input-invalid]="hasError('instructions')"></textarea>
+
+                    @if (hasError('instructions', 'maxlength')) {
+                    <p class="field-error">
+                        Instructions cannot exceed 1000 characters.
+                    </p>
+                    }
+                </div>
+            </div>
+        </article>
+
+        <article class="form-card">
+            <div class="section-heading">
+                <div class="section-icon section-icon--calendar">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                        <path d="M16 3v4"></path>
+                        <path d="M8 3v4"></path>
+                        <path d="M3 10h18"></path>
+                    </svg>
+                </div>
+
+                <div>
+                    <h2>Therapy period</h2>
+                </div>
+            </div>
+
+            <div class="fields-grid">
+                <div class="form-field">
+                    <label for="therapy-start-date">
+                        Start date
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <input id="therapy-start-date" type="date" formControlName="startDate"
+                        [class.input-invalid]="hasError('startDate')" />
+
+                    @if (hasError('startDate', 'required')) {
+                    <p class="field-error">
+                        Start date is required.
+                    </p>
+                    }
+                </div>
+
+                <div class="form-field">
+                    <label for="therapy-end-date">
+                        End date
+                        <span class="optional-label">Optional</span>
+                    </label>
+
+                    <input id="therapy-end-date" type="date" formControlName="endDate" />
+
+                    <p class="field-hint">
+                        Leave empty if the therapy has no planned end.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <article class="form-card">
+            <div class="schedule-section-heading">
+                <div class="section-heading">
+                    <div class="section-icon section-icon--clock">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 2"></path>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h2>Schedules</h2>
+                    </div>
+                </div>
+
+                <button class="add-schedule-button" type="button" (click)="addSchedule()">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 5v14"></path>
+                        <path d="M5 12h14"></path>
+                    </svg>
+
+                    Add schedule
+                </button>
+            </div>
+
+            <div class="schedules-list" formArrayName="schedules">
+                @for (
+                schedule of schedules.controls;
+                track schedule;
+                let scheduleIndex = $index
+                ) {
+                <section class="schedule-card" [formGroupName]="scheduleIndex">
+                    <div class="schedule-card-header">
+                        <div>
+                            <span class="schedule-number">
+                                {{ scheduleIndex + 1 }}
+                            </span>
+
+                            <div>
+                                <h3>
+                                    Schedule {{ scheduleIndex + 1 }}
+                                </h3>
+                                <p>
+                                    Choose the time, days and active
+                                    period for this schedule.
+                                </p>
+                            </div>
+                        </div>
+
+                        <button class="remove-schedule-button" type="button" [disabled]="schedules.length === 1"
+                            [attr.aria-label]="
+                                        'Remove schedule ' +
+                                        (scheduleIndex + 1)
+                                    " (click)="removeSchedule(scheduleIndex)">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 7h16"></path>
+                                <path d="M9 7V4h6v3"></path>
+                                <path d="M7 7l1 13h8l1-13"></path>
+                                <path d="M10 11v5"></path>
+                                <path d="M14 11v5"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="fields-grid schedule-fields">
+                        <div class="form-field">
+                            <label [for]="
+                                            'schedule-time-' +
+                                            scheduleIndex
+                                        ">
+                                Time
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <input [id]="
+                                            'schedule-time-' +
+                                            scheduleIndex
+                                        " type="time" formControlName="time" [class.input-invalid]="
+                                            scheduleHasError(
+                                                scheduleIndex,
+                                                'time'
+                                            )
+                                        " />
+
+                            @if (
+                            scheduleHasError(
+                            scheduleIndex,
+                            'time',
+                            'required'
+                            )
+                            ) {
+                            <p class="field-error">
+                                Time is required.
+                            </p>
+                            }
+                        </div>
+
+                        <div class="form-field days-field">
+                            <label>
+                                Days of the week
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <div class="day-selector" role="group" [attr.aria-label]="
+                                            'Days for schedule ' +
+                                            (scheduleIndex + 1)
+                                        ">
+                                @for (
+                                day of dayOptions;
+                                track day.value
+                                ) {
+                                <button class="day-button" type="button" [class.day-button--selected]="
+                                                    isDaySelected(
+                                                        scheduleIndex,
+                                                        day.value
+                                                    )
+                                                " [attr.aria-pressed]="
+                                                    isDaySelected(
+                                                        scheduleIndex,
+                                                        day.value
+                                                    )
+                                                " (click)="
+                                                    toggleScheduleDay(
+                                                        scheduleIndex,
+                                                        day.value
+                                                    )
+                                                ">
+                                    {{ day.label.slice(0, 3) }}
+                                </button>
+                                }
+                            </div>
+
+                            @if (
+                            scheduleHasError(
+                            scheduleIndex,
+                            'daysOfWeek',
+                            'required'
+                            )
+                            ) {
+                            <p class="field-error">
+                                Select at least one day.
+                            </p>
+                            }
+                        </div>
+
+                        <div class="form-field">
+                            <label [for]="
+                                            'schedule-start-date-' +
+                                            scheduleIndex
+                                        ">
+                                Schedule start date
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <input [id]="
+                                            'schedule-start-date-' +
+                                            scheduleIndex
+                                        " type="date" formControlName="startDate" [class.input-invalid]="
+                                            scheduleHasError(
+                                                scheduleIndex,
+                                                'startDate'
+                                            )
+                                        " />
+
+                            @if (
+                            scheduleHasError(
+                            scheduleIndex,
+                            'startDate',
+                            'required'
+                            )
+                            ) {
+                            <p class="field-error">
+                                Schedule start date is required.
+                            </p>
+                            }
+                        </div>
+
+                        <div class="form-field">
+                            <label [for]="
+                                            'schedule-end-date-' +
+                                            scheduleIndex
+                                        ">
+                                Schedule end date
+                                <span class="optional-label">
+                                    Optional
+                                </span>
+                            </label>
+
+                            <input [id]="
+                                            'schedule-end-date-' +
+                                            scheduleIndex
+                                        " type="date" formControlName="endDate" />
+                        </div>
+
+                        <div class="form-field full-width">
+                            <label [for]="
+                                            'schedule-frequency-' +
+                                            scheduleIndex
+                                        ">
+                                Frequency description
+                            </label>
+
+                            <input [id]="
+                                            'schedule-frequency-' +
+                                            scheduleIndex
+                                        " type="text" formControlName="frequencyDescription" maxlength="250"
+                                placeholder="For example, every morning" [class.input-invalid]="
+                                            scheduleHasError(
+                                                scheduleIndex,
+                                                'frequencyDescription'
+                                            )
+                                        " />
+
+                            @if (
+                            scheduleHasError(
+                            scheduleIndex,
+                            'frequencyDescription',
+                            'maxlength'
+                            )
+                            ) {
+                            <p class="field-error">
+                                Frequency description cannot
+                                exceed 250 characters.
+                            </p>
+                            }
+                        </div>
+
+                        <div class="form-field full-width">
+                            <label [for]="
+                                            'schedule-instructions-' +
+                                            scheduleIndex
+                                        ">
+                                Schedule instructions
+                            </label>
+
+                            <textarea [id]="
+                                            'schedule-instructions-' +
+                                            scheduleIndex
+                                        " formControlName="instructions" rows="2" maxlength="1000"
+                                placeholder="Additional instructions for this time" [class.input-invalid]="
+                                            scheduleHasError(
+                                                scheduleIndex,
+                                                'instructions'
+                                            )
+                                        "></textarea>
+
+                            @if (
+                            scheduleHasError(
+                            scheduleIndex,
+                            'instructions',
+                            'maxlength'
+                            )
+                            ) {
+                            <p class="field-error">
+                                Instructions cannot exceed
+                                1000 characters.
+                            </p>
+                            }
+                        </div>
+                    </div>
+                </section>
+                }
+            </div>
+        </article>
+
+        <article class="form-card">
+            <div class="section-heading">
+                <div class="section-icon section-icon--notes">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M6 3h9l3 3v15H6Z"></path>
+                        <path d="M14 3v4h4"></path>
+                        <path d="M9 12h6"></path>
+                        <path d="M9 16h6"></path>
+                    </svg>
+                </div>
+
+                
+                <h2>Additional notes</h2>
+                
+            </div>
+
+            <div class="form-field">
+                <label for="therapy-notes">Notes</label>
+
+                <textarea id="therapy-notes" formControlName="notes" rows="4" maxlength="1000"
+                    placeholder="Enter any additional notes" [class.input-invalid]="hasError('notes')"></textarea>
+
+                @if (hasError('notes', 'maxlength')) {
+                <p class="field-error">
+                    Notes cannot exceed 1000 characters.
+                </p>
+                }
+            </div>
+        </article>
+
+        <div class="form-actions">
+            <button class="secondary-button" type="button" [disabled]="isSubmitting" (click)="cancel()">
+                Cancel
+            </button>
+
+            <button class="primary-button" type="submit" [disabled]="isSubmitting">
+                @if (isSubmitting) {
+                <span class="button-spinner" aria-hidden="true"></span>
+                } @else {
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    @if (isEditMode) {
+                    <path d="M5 4h12l2 2v14H5Z"></path>
+                    <path d="M8 4v6h8V4"></path>
+                    <path d="M8 20v-6h8v6"></path>
+                    } @else {
+                    <path d="M12 5v14"></path>
+                    <path d="M5 12h14"></path>
+                    }
+                </svg>
+                }
+
+                {{ submitButtonLabel }}
+            </button>
+        </div>
+    </form>
+    }
+</section>

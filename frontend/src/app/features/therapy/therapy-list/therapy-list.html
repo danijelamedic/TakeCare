@@ -1,0 +1,210 @@
+<section class="therapy-page">
+
+    <header class="therapy-header">
+        <div>
+            <h1>Therapies</h1>
+
+            <p>
+                Review treatment plans and schedules.
+            </p>
+        </div>
+
+        <button class="primary-button" type="button" [disabled]="patientId === null" (click)="openCreateTherapy()">
+            <span class="button-icon" aria-hidden="true">+</span>
+            <span>Add therapy</span> 
+        </button>
+    </header>
+
+    @if (successMessage) {
+    <div class="message success-message">
+        <span aria-hidden="true">✓</span>
+        {{ successMessage }}
+    </div>
+    }
+
+    @if (errorMessage) {
+    <div class="message error-message">
+        <span aria-hidden="true">!</span>
+        {{ errorMessage }}
+    </div>
+    }
+
+    <section class="therapy-toolbar">
+        <div class="filters" aria-label="Filter therapies by status">
+            @for (filter of filters; track filter.value) {
+            <button class="filter-button" type="button" [class.filter-button--active]="
+                        selectedFilter === filter.value
+                    " [disabled]="isLoading" (click)="selectFilter(filter.value)">
+                {{ filter.label }}
+            </button>
+            }
+        </div>
+
+        <span class="therapy-count">
+            {{ therapies.length }}
+            {{ therapies.length === 1 ? 'therapy' : 'therapies' }}
+        </span>
+    </section>
+
+    @if (isLoading) {
+    <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading therapies...</p>
+    </div>
+    } @else if (!errorMessage && therapies.length === 0) {
+    <div class="empty-state">
+
+        <svg class="empty-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8.5 4.5a4.95 4.95 0 0 1 7 0l4 4a4.95
+                       4.95 0 0 1-7 7l-4-4a4.95 4.95 0 0 1 0-7Z" />
+            <path d="m9 12 6-6" />
+        </svg>
+
+        <h2>
+            {{
+            selectedFilter === 'ALL'
+            ? 'No therapies yet'
+            : 'No therapies with this status'
+            }}
+        </h2>
+
+        <p>
+            @if (selectedFilter === 'ALL') {
+            Add the first therapy to begin organising the
+            treatment plan.
+            } @else {
+            Try selecting another status or view all therapies.
+            }
+        </p>
+
+        @if (selectedFilter === 'ALL' && patientId !== null) {
+        <button class="primary-button" type="button" (click)="openCreateTherapy()">
+            <span class="button-icon" aria-hidden="true">+</span>
+            <span>Add first therapy</span>
+        </button>
+        }
+    </div>
+    } @else if (therapies.length > 0) {
+    <div class="therapy-list">
+
+        @for (
+        therapy of therapies;
+        track trackTherapyById($index, therapy)
+        ) {
+        <article class="therapy-card">
+
+            <div class="card-main">
+                <div class="therapy-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <g transform="rotate(-45 12 12)">
+                            <rect x="7" y="3.5" width="10" height="17" rx="5" />
+                            <path d="M7 12h10" />
+                        </g>
+                    </svg>
+                </div>
+
+                <div class="therapy-content">
+                    <div class="therapy-title-row">
+                        <h2>{{ therapy.name }}</h2>
+
+                        <span class="status-badge" [class.status-badge--active]="
+                                        therapy.status === 'ACTIVE'
+                                    " [class.status-badge--paused]="
+                                        therapy.status === 'PAUSED'
+                                    " [class.status-badge--completed]="
+                                        therapy.status === 'COMPLETED'
+                                    ">
+                            {{ getStatusLabel(therapy.status) }}
+                        </span>
+                    </div>
+
+                    <p class="dosage">
+                        {{ therapy.dosage || 'Dosage not specified' }}
+
+                        @if (therapy.frequency) {
+                        <span>·</span>
+                        {{ therapy.frequency }}
+                        }
+                    </p>
+
+                    <div class="therapy-meta">
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="8" />
+                                <path d="M12 8v4l3 2" />
+                            </svg>
+
+                            <span>
+                                {{ getScheduleDays(therapy) }}
+                                at
+                                {{ getScheduleTimes(therapy) }}
+                            </span>
+                        </div>
+
+                        <div class="meta-item">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="4" y="5.5" width="16" height="14" rx="2" />
+                                <path d="M8 3.5v4M16 3.5v4M4 9.5h16" />
+                            </svg>
+
+                            <span>
+                                {{ therapy.startDate }}
+
+                                @if (therapy.endDate) {
+                                – {{ therapy.endDate }}
+                                } @else {
+                                – Ongoing
+                                }
+                            </span>
+                        </div>
+                    </div>
+
+                    @if (therapy.instructions) {
+                    <p class="instructions">
+                        {{ therapy.instructions }}
+                    </p>
+                    }
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="text-button" type="button" (click)="openTherapyDetails(therapy.id)">
+                    View details
+                </button>
+
+                <button class="secondary-button" type="button" (click)="openEditTherapy(therapy.id)">
+                    Edit
+                </button>
+
+                @if (therapy.status === 'ACTIVE' && !isCoordinator) {
+                <button class="primary-button compact-button" type="button" (click)="openIntakeForm(therapy.id)">
+                    Record intake
+                </button>
+                } @else if (therapy.status === 'PAUSED') {
+                    
+                <button class="primary-button compact-button" type="button" [disabled]="updatingTherapyId !== null"
+                    (click)="updateStatus(therapy, 'ACTIVE')">
+                    {{
+                    updatingTherapyId === therapy.id
+                    ? 'Updating...'
+                    : 'Resume'
+                    }}
+                </button>
+                } @else {
+                <button class="secondary-button" type="button" [disabled]="updatingTherapyId !== null"
+                    (click)="updateStatus(therapy, 'ACTIVE')">
+                    {{
+                    updatingTherapyId === therapy.id
+                    ? 'Updating...'
+                    : 'Reactivate'
+                    }}
+                </button>
+                }
+            </div>
+
+        </article>
+        }
+    </div>
+    }
+
+</section>
