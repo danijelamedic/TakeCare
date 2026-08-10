@@ -13,6 +13,7 @@ import { CoordinatorLayout } from './layouts/coordinator-layout/coordinator-layo
 import { SupportCoordinator } from './features/support-coordinator/support-coordinator';
 import { AssignedPatient } from './features/assigned-patient/assigned-patient';
 import { Diary } from './features/diary/diary';
+import { TherapyList } from './features/therapy/therapy-list/therapy-list';
 
 export const routes: Routes = [
     {
@@ -80,6 +81,33 @@ export const routes: Routes = [
             {
                 path: 'diary',
                 component: Diary
+            },
+            {
+                path: 'therapies',
+                component: TherapyList,
+                title: 'Therapies | TakeCare'
+            },
+            {
+                path: 'therapies/create',
+                loadComponent: () =>
+                    import(
+                        './features/therapy/therapy-form/therapy-form'
+                    ).then(component => component.TherapyForm),
+                title: 'Add therapy | TakeCare'
+            },
+            {
+                path: 'therapies/:id/edit',
+                loadComponent: () =>
+                    import(
+                        './features/therapy/therapy-form/therapy-form'
+                    ).then(component => component.TherapyForm),
+                title: 'Edit therapy | TakeCare'
+            },
+            {
+                path: 'therapies/:id',
+                loadComponent: () =>
+                    import('./features/therapy/therapy-details/therapy-details').then(component => component.TherapyDetails),
+                title: 'Therapy details | TakeCare'
             }
         ]
     },
@@ -106,6 +134,33 @@ export const routes: Routes = [
             {
                 path: 'diary',
                 component: Diary
+            },
+            {
+                path: 'therapies',
+                component: TherapyList,
+                title: 'Therapies | TakeCare'
+            },
+            {
+                path: 'therapies/create',
+                loadComponent: () =>
+                    import(
+                        './features/therapy/therapy-form/therapy-form'
+                    ).then(component => component.TherapyForm),
+                title: 'Add therapy | TakeCare'
+            },
+            {
+                path: 'therapies/:id/edit',
+                loadComponent: () =>
+                    import(
+                        './features/therapy/therapy-form/therapy-form'
+                    ).then(component => component.TherapyForm),
+                title: 'Edit therapy | TakeCare'
+            },
+            {
+                path: 'therapies/:id',
+                loadComponent: () =>
+                    import('./features/therapy/therapy-details/therapy-details').then(component => component.TherapyDetails),
+                title: 'Therapy details | TakeCare'
             }
         ]
     },
