@@ -57,6 +57,7 @@ export interface TherapyResponse {
 
   prescribedById: number | null;
   prescribedByName: string | null;
+  prescribedByProfession: string | null;
 
   createdById: number;
   createdByName: string;

@@ -6,8 +6,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 import { PatientService } from '../../../core/services/patient.service';
 import { TherapyService } from '../../../core/services/therapy.service';
+import { ProfessionalContactService } from '../../../core/services/professional-contact.service';
 
 import { DayOfWeek, TherapyRequest, TherapyResponse, TherapyStatus } from '../../../core/models/therapy.models';
+import { ProfessionalContactResponse } from '../../../core/models/professional-contact.models';
 
 interface DayOption {
     label: string;
@@ -51,6 +53,8 @@ export class TherapyForm implements OnInit {
 
     private existingTherapy: TherapyResponse | null = null;
 
+    professionals: ProfessionalContactResponse[] = [];
+
     constructor(
         private readonly formBuilder: FormBuilder,
         private readonly authService: AuthService,
@@ -58,7 +62,8 @@ export class TherapyForm implements OnInit {
         private readonly therapyService: TherapyService,
         private readonly activatedRoute: ActivatedRoute,
         private readonly router: Router,
-        private readonly changeDetectorRef: ChangeDetectorRef
+        private readonly changeDetectorRef: ChangeDetectorRef,
+        private readonly professionalContactService: ProfessionalContactService
     ) {
         this.therapyForm = this.formBuilder.group({
             name: [
@@ -68,6 +73,7 @@ export class TherapyForm implements OnInit {
                     Validators.maxLength(150)
                 ]
             ],
+            prescribedById: [null],
             description: [
                 '',
                 Validators.maxLength(1000)
@@ -196,6 +202,33 @@ export class TherapyForm implements OnInit {
     }
 
     private continueInitialization(): void {
+        this.loadProfessionals();
+    }
+
+    private loadProfessionals(): void {
+        if (this.patientId === null) {
+            return;
+        }
+
+        this.professionalContactService
+            .getProfessionalsForPatient(this.patientId)
+            .subscribe({
+                next: professionals => {
+                    this.professionals = [...professionals].sort(
+                        (first, second) =>
+                            first.fullName.localeCompare(second.fullName)
+                    );
+
+                    this.continueAfterProfessionalsLoad();
+                },
+                error: () => {
+                    this.professionals = [];
+                    this.continueAfterProfessionalsLoad();
+                }
+            });
+    }
+
+    private continueAfterProfessionalsLoad(): void {
         if (
             this.isEditMode &&
             this.therapyId !== null
@@ -243,6 +276,7 @@ export class TherapyForm implements OnInit {
     private populateForm(therapy: TherapyResponse): void {
         this.therapyForm.patchValue({
             name: therapy.name,
+            prescribedById: therapy.prescribedById,
             description: therapy.description ?? '',
             dosage: therapy.dosage ?? '',
             frequency: therapy.frequency ?? '',
@@ -429,7 +463,10 @@ export class TherapyForm implements OnInit {
             endDate: formValue.endDate || null,
             status,
             prescribedById:
-                this.existingTherapy?.prescribedById ?? null,
+                formValue.prescribedById === null ||
+                formValue.prescribedById === ''
+                    ? null
+                    : Number(formValue.prescribedById),
             notes: this.toNullableText(
                 formValue.notes
             ),

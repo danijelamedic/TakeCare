@@ -1,0 +1,361 @@
+:host {
+    display: block;
+}
+
+.professional-profile-page {
+    width: 100%;
+    max-width: 1040px;
+    margin: 0 auto;
+}
+
+button {
+    font: inherit;
+    cursor: pointer;
+}
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+    padding: 6px 0;
+    border: 0;
+    background: transparent;
+    color: #526c7d;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 160ms ease;
+
+    svg {
+        width: 18px;
+        height: 18px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.9;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    &:hover {
+        color: #0b5a8f;
+    }
+}
+
+/* Profile header – isti obrazac kao Caregiver profile */
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 22px;
+    margin-bottom: 24px;
+    padding: 30px;
+    border: 1px solid #cfe3e9;
+    border-radius: 20px;
+    background: linear-gradient(105deg,
+            #dff7f8 0%,
+            #e9efff 55%,
+            #f0e8ff 100%);
+}
+
+.profile-identity {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 22px;
+}
+
+.profile-avatar {
+    display: grid;
+    width: 88px;
+    height: 88px;
+    flex: 0 0 88px;
+    place-items: center;
+    border-radius: 50%;
+    background: #3c6997;
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 10px 24px rgba(72, 122, 150, 0.2);
+}
+
+/* Avatar prati grupu profesije */
+
+.professional-medical .profile-avatar {
+    background: #094074;
+}
+
+.professional-mental-health .profile-avatar {
+    background: #bfacc8;
+    color: #08233f;
+}
+
+.professional-therapy .profile-avatar {
+    background: #5adbff;
+    color: #08233f;
+}
+
+.professional-support .profile-avatar {
+    background: #3c6997;
+}
+
+.eyebrow {
+    margin: 0 0 7px;
+    color: #46798b;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.profile-header h1 {
+    margin: 0;
+    overflow-wrap: anywhere;
+    color: #15344a;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+.role-label {
+    margin: 8px 0 0;
+    color: #5e7088;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+// .connected-badge {
+//     flex-shrink: 0;
+//     align-self: flex-start;
+//     padding: 8px 13px;
+//     border: 1px solid rgba(9, 64, 116, 0.1);
+//     border-radius: 999px;
+//     background: rgba(255, 255, 255, 0.72);
+//     color: #094074;
+//     font-size: 12px;
+//     font-weight: 700;
+// }
+
+/* Profile cards */
+
+.profile-card,
+.state-card {
+    border: 1px solid #dde7ee;
+    border-radius: 20px;
+    background: #ffffff;
+    box-shadow: 0 12px 32px rgba(20, 62, 92, 0.06);
+}
+
+.profile-card {
+    margin-bottom: 18px;
+    padding: 28px;
+}
+
+.card-heading {
+    margin-bottom: 22px;
+}
+
+.card-heading h2 {
+    margin: 0;
+    color: #08264a;
+    font-size: 20px;
+}
+
+.card-heading p {
+    margin: 7px 0 0;
+    color: #708399;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.detail-item {
+    display: flex;
+    min-width: 0;
+    min-height: 72px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px;
+    border-radius: 14px;
+    background: #f6f9fa;
+}
+
+.detail-item--full {
+    grid-column: 1 / -1;
+}
+
+.detail-label {
+    color: #708399;
+    font-size: 12px;
+}
+
+.detail-item strong,
+.detail-item a {
+    overflow-wrap: anywhere;
+    color: #09264a;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.detail-item a {
+    color: #3c6997;
+    text-decoration: none;
+}
+
+.detail-item a:hover {
+    color: #094074;
+    text-decoration: underline;
+}
+
+.notes-content {
+    padding: 16px;
+    border-radius: 14px;
+    background: #f6f9fa;
+    color: #36596c;
+    line-height: 1.7;
+    white-space: pre-wrap;
+}
+
+/* Loading/error states */
+
+.state-card {
+    display: flex;
+    min-height: 280px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 36px;
+    color: #52627a;
+    text-align: center;
+}
+
+.state-card h2 {
+    margin: 0;
+    color: #08264a;
+}
+
+.state-card p {
+    max-width: 520px;
+    margin: 14px 0 0;
+    line-height: 1.6;
+}
+
+.state-card--error {
+    border-color: #f0b5bd;
+    background: #fff3f5;
+    color: #a62c3e;
+}
+
+.state-card--error .primary-button {
+    margin-top: 22px;
+}
+
+.spinner {
+    width: 38px;
+    height: 38px;
+    border: 4px solid #e5edf2;
+    border-top-color: #094074;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Actions */
+
+.page-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 22px;
+}
+
+.primary-button,
+.secondary-button {
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.primary-button {
+    border: 0;
+    background: #094074;
+    color: #ffffff;
+}
+
+.primary-button:hover {
+    background: #07355f;
+    transform: translateY(-1px);
+}
+
+.secondary-button {
+    border: 1px solid #c7d9df;
+    background: #ffffff;
+    color: #315467;
+}
+
+.secondary-button:hover {
+    background: #f4f8f9;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 700px) {
+    .profile-header {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 22px;
+    }
+
+    .profile-identity {
+        align-items: flex-start;
+    }
+
+    .profile-avatar {
+        width: 66px;
+        height: 66px;
+        flex-basis: 66px;
+        font-size: 20px;
+    }
+
+    .profile-header h1 {
+        font-size: 27px;
+    }
+
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-item--full {
+        grid-column: auto;
+    }
+
+    .profile-card {
+        padding: 22px;
+    }
+
+    .page-actions {
+        flex-direction: column;
+    }
+
+    .secondary-button {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-identity {
+        flex-direction: column;
+    }
+}

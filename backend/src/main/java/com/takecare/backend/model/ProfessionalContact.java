@@ -52,22 +52,6 @@ public class ProfessionalContact {
     @Column(columnDefinition = "TEXT")
     private String notes;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(
-            name = "patient_id",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_professional_contact_patient")
-    )
-    private Patient patient;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(
-            name = "created_by_id",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "fk_professional_contact_created_by")
-    )
-    private User createdBy;
-
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

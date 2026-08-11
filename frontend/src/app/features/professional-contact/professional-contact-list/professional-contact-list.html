@@ -1,0 +1,447 @@
+<section class="professionals-page">
+
+    <header class="page-header">
+        <div>
+            <h1>Professionals</h1>
+
+            <p class="page-description">
+                View the professionals involved in the patient's
+                healthcare and support.
+            </p>
+        </div>
+
+        @if (isCoordinator) {
+        <button class="primary-button" type="button" [disabled]="patientId === null" (click)="openCatalogue()">
+            <span class="button-icon">+</span>
+            Connect professional
+        </button>
+        }
+    </header>
+
+    @if (successMessage) {
+    <div class="message success-message">
+        <span>✓</span>
+        {{ successMessage }}
+    </div>
+    }
+
+    @if (errorMessage) {
+    <div class="message error-message">
+        <span>!</span>
+        {{ errorMessage }}
+    </div>
+    }
+
+    <section class="professionals-toolbar">
+        <div class="toolbar-heading">
+            <div class="toolbar-icon">⚕</div>
+    
+            <div>
+                <h2>Care team</h2>
+    
+                <p>
+                    {{ filteredConnectedProfessionals.length }}
+                    {{
+                    filteredConnectedProfessionals.length === 1
+                    ? 'professional'
+                    : 'professionals'
+                    }}
+                    displayed
+                </p>
+            </div>
+        </div>
+    
+        <div class="filters">
+            <div class="filter-field search-field">
+                <label for="professional-search">
+                    Search contacts
+                </label>
+    
+                <input id="professional-search" type="search" [(ngModel)]="searchTerm"
+                    placeholder="Name, specialty or institution" />
+            </div>
+    
+            <div class="filter-field type-filter">
+                <label for="professional-type">
+                    Professional type
+                </label>
+    
+                <select id="professional-type" [(ngModel)]="selectedType">
+                    @for (
+                    option of professionalTypes;
+                    track option.value
+                    ) {
+                    <option [value]="option.value">
+                        {{ option.label }}
+                    </option>
+                    }
+                </select>
+            </div>
+    
+            @if (searchTerm || selectedType !== 'ALL') {
+            <button class="clear-filters-button" type="button" (click)="clearMainFilters()">
+                Clear all
+            </button>
+            }
+        </div>
+    </section>
+
+    @if (isLoading) {
+    <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading professional contacts...</p>
+    </div>
+    } @else if (
+    connectedProfessionals.length === 0 &&
+    !errorMessage
+    ) {
+    <div class="empty-state">
+        <div class="empty-icon">PC</div>
+
+        <h2>No professionals connected yet</h2>
+
+        <p>
+            @if (isCoordinator) {
+            Open the professional catalogue and connect the
+            specialists involved in the patient's care.
+            } @else {
+            The support coordinator has not connected any
+            professional contacts yet.
+            }
+        </p>
+
+        @if (isCoordinator) {
+        <button class="primary-button" type="button" [disabled]="patientId === null" (click)="openCatalogue()">
+            <span class="button-icon">+</span>
+            Open catalogue
+        </button>
+        }
+    </div>
+    } @else if (
+    filteredConnectedProfessionals.length === 0
+    ) {
+    <div class="empty-state">
+        <div class="empty-icon">?</div>
+
+        <h2>No matching professionals</h2>
+
+        <p>
+            Try changing the search term or selected profession.
+        </p>
+
+        <button class="secondary-button" type="button" (click)="clearMainFilters()">
+            Clear filters
+        </button>
+    </div>
+    } @else {
+    <div class="professionals-grid">
+
+        @for (
+        professional of filteredConnectedProfessionals;
+        track trackProfessionalById($index, professional)
+        ) {
+        <article [class]="
+                'professional-card ' +
+                getProfessionalClass(professional.professionalType)
+            ">
+            <div class="card-accent"></div>
+
+            <div class="professional-card-content">
+
+                <div class="professional-card-header">
+                    <div class="professional-identity">
+                        <div class="professional-avatar">
+                            {{ professional.firstName.charAt(0) }}
+                            {{ professional.lastName.charAt(0) }}
+                        </div>
+
+                        <div class="professional-heading">
+                            <span class="profession-label">
+                                {{
+                                getProfessionalTypeLabel(
+                                professional.professionalType
+                                )
+                                }}
+                            </span>
+
+                            <h3>{{ professional.fullName }}</h3>
+
+                            <p>
+                                {{
+                                professional.specialization ||
+                                'Specialization not provided'
+                                }}
+                            </p>
+                        </div>
+                    </div>
+<!-- 
+                    <span class="connected-badge">
+                        Connected
+                    </span> -->
+                </div>
+
+                <div class="contact-details">
+                    <div class="contact-detail">
+                        <span class="detail-icon">I</span>
+
+                        <div>
+                            <span class="detail-label">
+                                Institution
+                            </span>
+
+                            <strong>
+                                {{
+                                professional.institutionName ||
+                                'Not provided'
+                                }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="contact-detail">
+                        <span class="detail-icon">P</span>
+
+                        <div>
+                            <span class="detail-label">
+                                Phone
+                            </span>
+
+                            @if (professional.phoneNumber) {
+                            <a [href]="'tel:' + professional.phoneNumber">
+                                {{ professional.phoneNumber }}
+                            </a>
+                            } @else {
+                            <strong>Not provided</strong>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="contact-detail">
+                        <span class="detail-icon">E</span>
+
+                        <div>
+                            <span class="detail-label">
+                                Email
+                            </span>
+
+                            @if (professional.email) {
+                            <a [href]="'mailto:' + professional.email">
+                                {{ professional.email }}
+                            </a>
+                            } @else {
+                            <strong>Not provided</strong>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                @if (
+                pendingRemovalContact?.id === professional.id
+                ) {
+                <div class="removal-confirmation">
+                    <div>
+                        <strong>Remove this professional?</strong>
+
+                        <p>
+                            The professional will no longer be connected
+                            to this patient.
+                        </p>
+                    </div>
+
+                    <div class="confirmation-actions">
+                        <button class="cancel-button" type="button" [disabled]="
+                                removingContactId === professional.id
+                            " (click)="cancelRemoval()">
+                            Cancel
+                        </button>
+
+                        <button class="confirm-remove-button" type="button" [disabled]="
+                                removingContactId === professional.id
+                            " (click)="confirmRemoval()">
+                            {{
+                            removingContactId === professional.id
+                            ? 'Removing...'
+                            : 'Yes, remove'
+                            }}
+                        </button>
+                    </div>
+                </div>
+                } @else {
+                <div class="card-actions">
+                    <button class="details-button" type="button" (click)="
+                            openProfessionalDetails(professional.id)
+                        ">
+                        View details
+                    </button>
+
+                    @if (isCoordinator) {
+                    <button class="remove-button" type="button" (click)="requestRemoval(professional)">
+                        Remove
+                    </button>
+                    }
+                </div>
+                }
+
+            </div>
+        </article>
+        }
+
+    </div>
+    }
+
+    @if (isCatalogueOpen) {
+    <div class="catalogue-overlay" role="presentation" (click)="closeCatalogue()">
+        <section class="catalogue-modal" role="dialog" aria-modal="true" aria-labelledby="catalogue-title"
+            (click)="$event.stopPropagation()">
+            <header class="catalogue-header">
+                <div>
+                    <p class="eyebrow">PROFESSIONAL DIRECTORY</p>
+
+                    <h2 id="catalogue-title">
+                        Connect a professional
+                    </h2>
+
+                    <p>
+                        Select a professional from the central catalogue
+                        and connect them to this patient.
+                    </p>
+                </div>
+
+                <button class="close-button" type="button" aria-label="Close catalogue"
+                    [disabled]="connectingContactId !== null" (click)="closeCatalogue()">
+                    ×
+                </button>
+            </header>
+
+            @if (catalogueErrorMessage) {
+            <div class="message error-message catalogue-message">
+                <span>!</span>
+                {{ catalogueErrorMessage }}
+            </div>
+            }
+
+            <div class="catalogue-filters">
+                <div class="filter-field search-field">
+                    <label for="catalogue-search">
+                        Search
+                    </label>
+
+                    <input id="catalogue-search" type="search" [(ngModel)]="catalogueSearchTerm"
+                        placeholder="Name, specialty or institution" />
+                </div>
+
+                <div class="filter-field">
+                    <label for="catalogue-type">
+                        Profession
+                    </label>
+
+                    <select id="catalogue-type" [(ngModel)]="catalogueSelectedType">
+                        @for (
+                        option of professionalTypes;
+                        track option.value
+                        ) {
+                        <option [value]="option.value">
+                            {{ option.label }}
+                        </option>
+                        }
+                    </select>
+                </div>
+
+                @if (
+                catalogueSearchTerm ||
+                catalogueSelectedType !== 'ALL'
+                ) {
+                <button class="clear-filters-button" type="button" (click)="clearCatalogueFilters()">
+                    Clear all
+                </button>
+                }
+            </div>
+
+            <div class="catalogue-content">
+                @if (isCatalogueLoading) {
+                <div class="catalogue-state">
+                    <div class="spinner"></div>
+                    <p>Loading professional catalogue...</p>
+                </div>
+                } @else if (
+                availableCatalogueProfessionals.length === 0
+                ) {
+                <div class="catalogue-state">
+                    <div class="empty-icon">✓</div>
+
+                    <h3>No available professionals</h3>
+
+                    <p>
+                        @if (
+                        catalogueSearchTerm ||
+                        catalogueSelectedType !== 'ALL'
+                        ) {
+                        No professionals match the selected filters.
+                        } @else {
+                        All professionals from the catalogue are
+                        already connected to this patient.
+                        }
+                    </p>
+                </div>
+                } @else {
+                <div class="catalogue-list">
+
+                    @for (
+                    professional of availableCatalogueProfessionals;
+                    track trackProfessionalById(
+                    $index,
+                    professional
+                    )
+                    ) {
+                    <article class="catalogue-item">
+                        <div class="catalogue-professional">
+                            <div class="catalogue-avatar">
+                                {{ professional.firstName.charAt(0) }}
+                                {{ professional.lastName.charAt(0) }}
+                            </div>
+
+                            <div>
+                                <span class="profession-label">
+                                    {{
+                                    getProfessionalTypeLabel(
+                                    professional.professionalType
+                                    )
+                                    }}
+                                </span>
+
+                                <h3>{{ professional.fullName }}</h3>
+
+                                <p>
+                                    {{
+                                    professional.specialization ||
+                                    'Specialization not provided'
+                                    }}
+                                </p>
+
+                                @if (professional.institutionName) {
+                                <small>
+                                    {{ professional.institutionName }}
+                                </small>
+                                }
+                            </div>
+                        </div>
+
+                        <button class="connect-button" type="button" [disabled]="connectingContactId !== null"
+                            (click)="connectProfessional(professional)">
+                            {{
+                            connectingContactId === professional.id
+                            ? 'Connecting...'
+                            : 'Connect'
+                            }}
+                        </button>
+                    </article>
+                    }
+
+                </div>
+                }
+            </div>
+        </section>
+    </div>
+    }
+
+</section>

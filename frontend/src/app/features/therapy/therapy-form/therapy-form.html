@@ -120,6 +120,49 @@
                     </p>
                     }
                 </div>
+                
+
+                <div class="form-field full-width">
+                    <label for="therapy-prescribed-by">
+                        Prescribed by
+                        <span class="optional-label">Optional</span>
+                    </label>
+                
+                    <select id="therapy-prescribed-by" formControlName="prescribedById">
+                        <option [ngValue]="null">
+                            Not specified
+                        </option>
+                
+                        @for (
+                        professional of professionals;
+                        track professional.id
+                        ) {
+                        <option [ngValue]="professional.id">
+                            {{ professional.fullName }}
+                            -
+                            {{
+                            professional.specialization ||
+                            professional.professionalType
+                            }}
+                        </option>
+                        }
+                    </select>
+                
+                    @if (professionals.length === 0) {
+                    <p class="field-hint">
+                        No professionals are currently connected to this
+                        patient.
+                    </p>
+                    }
+                    <!--  @else {
+                    <p class="field-hint">
+                        Select the professional who prescribed or recommended
+                        this therapy.
+                    </p>
+                    } -->
+                </div>
+
+                
 
                 <div class="form-field full-width">
                     <label for="therapy-description">

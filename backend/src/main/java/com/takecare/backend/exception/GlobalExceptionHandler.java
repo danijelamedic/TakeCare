@@ -158,6 +158,17 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(ProfessionalContactAccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>>
+    handleProfessionalContactAccessDenied(
+            ProfessionalContactAccessDeniedException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.FORBIDDEN,
+                exception.getMessage()
+        );
+    }
+
     private ResponseEntity<Map<String, Object>> buildErrorResponse(
             HttpStatus status,
             String message
@@ -171,5 +182,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(status)
                 .body(body);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>>
+    handleIllegalArgument(IllegalArgumentException exception) {
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage()
+        );
     }
 }

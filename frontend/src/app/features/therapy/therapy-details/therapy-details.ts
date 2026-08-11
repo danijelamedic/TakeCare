@@ -236,4 +236,20 @@ export class TherapyDetails implements OnInit {
     private refreshView(): void {
         this.changeDetectorRef.detectChanges();
     }
+
+    getProfessionLabel(profession: string | null | undefined): string {
+        if (!profession) {
+            return '';
+        }
+
+        return profession
+            .toLowerCase()
+            .split('_')
+            .map(
+                word =>
+                    word.charAt(0).toUpperCase() +
+                    word.slice(1)
+            )
+            .join(' ');
+    }
 }
