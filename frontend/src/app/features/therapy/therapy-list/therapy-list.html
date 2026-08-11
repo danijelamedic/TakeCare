@@ -180,8 +180,9 @@
                 <button class="primary-button compact-button" type="button" (click)="openIntakeForm(therapy.id)">
                     Record intake
                 </button>
-                } @else if (therapy.status === 'PAUSED') {
-                    
+                }
+                
+                @if (therapy.status === 'PAUSED') {
                 <button class="primary-button compact-button" type="button" [disabled]="updatingTherapyId !== null"
                     (click)="updateStatus(therapy, 'ACTIVE')">
                     {{
@@ -190,8 +191,10 @@
                     : 'Resume'
                     }}
                 </button>
-                } @else {
-                <button class="secondary-button" type="button" [disabled]="updatingTherapyId !== null"
+                }
+                
+                @if (therapy.status === 'COMPLETED') {
+                <button class="primary-button compact-button" type="button" [disabled]="updatingTherapyId !== null"
                     (click)="updateStatus(therapy, 'ACTIVE')">
                     {{
                     updatingTherapyId === therapy.id

@@ -108,6 +108,14 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./features/therapy/therapy-details/therapy-details').then(component => component.TherapyDetails),
                 title: 'Therapy details | TakeCare'
+            },
+            {
+                path: 'therapies/:id/intakes/create',
+                loadComponent: () =>
+                    import(
+                        './features/therapy/therapy-intake-form/therapy-intake-form'
+                    ).then(component => component.TherapyIntakeForm),
+                title: 'Record intake | TakeCare'
             }
         ]
     },
