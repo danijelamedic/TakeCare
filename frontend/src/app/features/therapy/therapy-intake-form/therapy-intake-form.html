@@ -1,0 +1,186 @@
+<div class="intake-page">
+    <div class="intake-container">
+
+        <button class="back-button" type="button" (click)="goBack()">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 12H5" />
+                <path d="m12 19-7-7 7-7" />
+            </svg>
+        
+            <span>Back to therapy details</span>
+        </button>
+
+        @if (isLoading) {
+        <div class="state-card">
+            <p>Loading therapy...</p>
+        </div>
+        } @else if (!therapy) {
+        <div class="state-card state-card--error">
+            <h2>Therapy could not be loaded</h2>
+
+            <p>
+                {{ errorMessage || 'Please try again later.' }}
+            </p>
+
+            <button type="button" class="secondary-button" (click)="goBack()">
+                Go back
+            </button>
+        </div>
+        } @else {
+        <header class="page-header">
+            <!-- <div class="header-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <g transform="rotate(-45 12 12)">
+                        <rect x="7" y="3.5" width="10" height="17" rx="5" />
+                        <path d="M7 12h10" />
+                    </g>
+                </svg>
+            </div> -->
+
+            <div>
+                <p class="page-eyebrow">
+                    {{ therapy.name }}
+                </p>
+
+                <h1>Record intake</h1>
+
+                <p class="page-description">
+                    Record whether this scheduled therapy dose
+                    was taken or skipped.
+                </p>
+            </div>
+        </header>
+
+        @if (errorMessage) {
+        <div class="error-message" role="alert">
+            {{ errorMessage }}
+        </div>
+        }
+
+        <form class="intake-form" [formGroup]="intakeForm" (ngSubmit)="submitForm()">
+            <section class="form-section">
+                <div class="section-heading">
+                    <h2>Intake details</h2>
+
+                </div>
+
+                <div class="form-field">
+                    <label for="scheduledAt">
+                        Scheduled date and time
+                        <span class="required-mark">*</span>
+                    </label>
+
+                    <input id="scheduledAt" type="datetime-local" formControlName="scheduledAt" />
+
+                    @if (
+                    intakeForm.get('scheduledAt')?.touched &&
+                    intakeForm.get('scheduledAt')?.hasError('required')
+                    ) {
+                    <p class="field-error">
+                        Scheduled date and time are required.
+                    </p>
+                    }
+                </div>
+
+                <fieldset class="status-fieldset">
+                    <legend>
+                        Intake status
+                        <span class="required-mark">*</span>
+                    </legend>
+
+                    <div class="status-options">
+                        <label class="status-option status-option--taken" [class.status-option--selected]="isTaken">
+                            <input type="radio" formControlName="status" value="TAKEN" />
+
+                            <span class="status-indicator" aria-hidden="true">
+                                ✓
+                            </span>
+
+                            <span class="status-content">
+                                <strong>Taken</strong>
+                                <small>
+                                    The scheduled dose was taken.
+                                </small>
+                            </span>
+                        </label>
+
+                        <label class="status-option status-option--skipped" [class.status-option--selected]="!isTaken">
+                            <input type="radio" formControlName="status" value="SKIPPED" />
+
+                            <span class="status-indicator" aria-hidden="true">
+                                —
+                            </span>
+
+                            <span class="status-content">
+                                <strong>Skipped</strong>
+                                <small>
+                                    The scheduled dose was not taken.
+                                </small>
+                            </span>
+                        </label>
+                    </div>
+                </fieldset>
+
+                @if (isTaken) {
+                <div class="form-field">
+                    <label for="takenAt">
+                        Taken at
+                    </label>
+
+                    <input id="takenAt" type="datetime-local" formControlName="takenAt" />
+
+                    <p class="field-hint">
+                        Leave the current time or enter the
+                        actual time when the dose was taken.
+                    </p>
+                </div>
+                }
+
+                <div class="form-field">
+                    <div class="label-row">
+                        <label for="notes">Notes</label>
+                        <span>Optional</span>
+                    </div>
+
+                    <textarea id="notes" rows="4" maxlength="1000" formControlName="notes"
+                        placeholder="Add an optional note about this intake..."></textarea>
+
+                    <div class="field-footer">
+                        <span>
+                            You can add any useful observations.
+                        </span>
+
+                        <span>
+                            {{
+                            intakeForm.get('notes')?.value?.length || 0
+                            }}/1000
+                        </span>
+                    </div>
+
+                    @if (
+                    intakeForm.get('notes')?.touched &&
+                    intakeForm.get('notes')?.hasError('maxlength')
+                    ) {
+                    <p class="field-error">
+                        Notes cannot contain more than
+                        1000 characters.
+                    </p>
+                    }
+                </div>
+            </section>
+
+            <div class="form-actions">
+                <button type="button" class="secondary-button" [disabled]="isSubmitting" (click)="cancel()">
+                    Cancel
+                </button>
+
+                <button type="submit" class="primary-button" [disabled]="
+                            intakeForm.invalid || isSubmitting
+                        ">
+                    {{ submitButtonLabel }}
+                </button>
+            </div>
+        </form>
+        }
+    </div>
+</div>
