@@ -37,6 +37,8 @@ public class TherapyResponse {
 
     private String prescribedByName;
 
+    private String prescribedByProfession;
+
     private Long createdById;
 
     private String createdByName;

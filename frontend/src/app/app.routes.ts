@@ -14,6 +14,8 @@ import { SupportCoordinator } from './features/support-coordinator/support-coord
 import { AssignedPatient } from './features/assigned-patient/assigned-patient';
 import { Diary } from './features/diary/diary';
 import { TherapyList } from './features/therapy/therapy-list/therapy-list';
+import { ProfessionalContactList } from './features/professional-contact/professional-contact-list/professional-contact-list';
+import { ProfessionalContactDetails } from './features/professional-contact/professional-contact-details/professional-contact-details';
 
 export const routes: Routes = [
     {
@@ -116,6 +118,16 @@ export const routes: Routes = [
                         './features/therapy/therapy-intake-form/therapy-intake-form'
                     ).then(component => component.TherapyIntakeForm),
                 title: 'Record intake | TakeCare'
+            },
+            {
+                path: 'professionals',
+                component: ProfessionalContactList,
+                title: 'Professionals | TakeCare'
+            },
+            {
+                path: 'professionals/:id',
+                component: ProfessionalContactDetails,
+                title: 'Professional details | TakeCare'
             }
         ]
     },
@@ -169,7 +181,17 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./features/therapy/therapy-details/therapy-details').then(component => component.TherapyDetails),
                 title: 'Therapy details | TakeCare'
-            }
+            },
+            {
+                path: 'professionals',
+                component: ProfessionalContactList,
+                title: 'Professionals | TakeCare'
+            },
+            {
+                path: 'professionals/:id',
+                component: ProfessionalContactDetails,
+                title: 'Professional details | TakeCare'
+            }   
         ]
     },
     {

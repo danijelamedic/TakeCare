@@ -25,6 +25,7 @@ public class TherapyService {
     private final TherapyScheduleRepository therapyScheduleRepository;
     private final PatientRepository patientRepository;
     private final ProfessionalContactRepository professionalContactRepository;
+    private final PatientProfessionalContactRepository patientProfessionalContactRepository;
     private final UserRepository userRepository;
     private final TherapyIntakeRepository therapyIntakeRepository;
 
@@ -285,11 +286,12 @@ public class TherapyService {
             return null;
         }
 
-        return professionalContactRepository
-                .findByIdAndPatientId(
-                        prescribedById,
-                        patient.getId()
+        return patientProfessionalContactRepository
+                .findByPatientIdAndProfessionalContactId(
+                        patient.getId(),
+                        prescribedById
                 )
+                .map(PatientProfessionalContact::getProfessionalContact)
                 .orElseThrow(() ->
                         new ProfessionalContactNotFoundException(
                                 prescribedById
@@ -428,6 +430,12 @@ public class TherapyService {
                                 : null
                 )
                 .prescribedByName(prescribedByName)
+                .prescribedByProfession(
+                        prescribedBy != null
+                                && prescribedBy.getProfessionalType() != null
+                                ? prescribedBy.getProfessionalType().name()
+                                : null
+                )
                 .createdById(creator.getId())
                 .createdByName(creatorName)
                 .createdByRole(creator.getRole())

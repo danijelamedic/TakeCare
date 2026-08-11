@@ -1,0 +1,184 @@
+<section class="professional-profile-page">
+
+    <button class="back-button" type="button" (click)="goBack()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+        </svg>
+    
+        <span>Back to professionals list</span>
+    </button>
+
+    @if (isLoading) {
+    <div class="state-card">
+        <div class="spinner"></div>
+        <p>Loading professional profile...</p>
+    </div>
+    } @else if (errorMessage || !professional) {
+    <div class="state-card state-card--error">
+        <h2>Professional unavailable</h2>
+
+        <p>
+            {{
+            errorMessage ||
+            'The professional profile could not be loaded.'
+            }}
+        </p>
+
+        <button class="primary-button" type="button" (click)="goBack()">
+            Return to professionals
+        </button>
+    </div>
+    } @else {
+    <header [class]="
+            'profile-header ' +
+            getProfessionalClass(
+                professional.professionalType
+            )
+        ">
+        <div class="profile-identity">
+            <div class="profile-avatar">
+                {{ professionalInitials }}
+            </div>
+
+            <div>
+                <p class="eyebrow">Professional profile</p>
+
+                <h1>{{ professional.fullName }}</h1>
+
+                <p class="role-label">
+                    {{
+                    getProfessionalTypeLabel(
+                    professional.professionalType
+                    )
+                    }}
+
+                    @if (professional.specialization) {
+                    <span aria-hidden="true"> · </span>
+                    {{ professional.specialization }}
+                    }
+                </p>
+            </div>
+        </div>
+<!-- 
+        <span class="connected-badge">
+            Connected
+        </span> -->
+    </header>
+
+    <article class="profile-card">
+        <div class="card-heading">
+            <h2>Contact information</h2>
+
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Phone</span>
+
+                @if (professional.phoneNumber) {
+                <a [href]="'tel:' + professional.phoneNumber">
+                    {{ professional.phoneNumber }}
+                </a>
+                } @else {
+                <strong>Not provided</strong>
+                }
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Email</span>
+
+                @if (professional.email) {
+                <a [href]="'mailto:' + professional.email">
+                    {{ professional.email }}
+                </a>
+                } @else {
+                <strong>Not provided</strong>
+                }
+            </div>
+
+            <div class="detail-item detail-item--full">
+                <span class="detail-label">Address</span>
+
+                <strong>
+                    {{ professional.address || 'Not provided' }}
+                </strong>
+            </div>
+        </div>
+    </article>
+
+    <article class="profile-card">
+        <div class="card-heading">
+            <h2>Professional information</h2>
+
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Profession</span>
+
+                <strong>
+                    {{
+                    getProfessionalTypeLabel(
+                    professional.professionalType
+                    )
+                    }}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Specialization</span>
+
+                <strong>
+                    {{
+                    professional.specialization ||
+                    'Not provided'
+                    }}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Institution</span>
+
+                <strong>
+                    {{
+                    professional.institutionName ||
+                    'Not provided'
+                    }}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Working hours</span>
+
+                <strong>
+                    {{
+                    professional.workingHours ||
+                    'Not provided'
+                    }}
+                </strong>
+            </div>
+        </div>
+    </article>
+
+    @if (professional.notes) {
+    <article class="profile-card">
+        <div class="card-heading">
+            <h2>Additional notes</h2>
+
+        </div>
+
+        <div class="notes-content">
+            {{ professional.notes }}
+        </div>
+    </article>
+    }
+<!-- 
+    <div class="page-actions">
+        <button class="secondary-button" type="button" (click)="goBack()">
+            Back to professionals
+        </button>
+    </div> -->
+    }
+
+</section>

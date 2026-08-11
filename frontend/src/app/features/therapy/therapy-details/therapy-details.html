@@ -130,8 +130,25 @@
 
                     <div class="information-item full-width">
                         <span>Prescribed by</span>
-                        <strong>
-                            {{ therapy.prescribedByName || 'Not specified' }}
+                        <strong class="prescribed-by-value">
+                            <span>
+                                {{ therapy.prescribedByName || 'Not specified' }}
+                            </span>
+                        
+                            @if (
+                            therapy.prescribedByName &&
+                            therapy.prescribedByProfession
+                            ) {
+                            <span aria-hidden="true">·</span>
+                        
+                            <span>
+                                {{
+                                getProfessionLabel(
+                                therapy.prescribedByProfession
+                                )
+                                }}
+                            </span>
+                            }
                         </strong>
                     </div>
                 </div>
