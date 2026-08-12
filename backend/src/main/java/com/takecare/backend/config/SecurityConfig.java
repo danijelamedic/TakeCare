@@ -5,6 +5,7 @@ import com.takecare.backend.security.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -126,12 +127,45 @@ public class SecurityConfig {
                         )
                 )
 
-                .authorizeHttpRequests(auth ->
-                        auth
-                                .requestMatchers("/api/auth/**")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
+                .authorizeHttpRequests(auth -> auth
+
+                        .requestMatchers("/api/auth/**")
+                        .permitAll()
+
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                "/api/appointment-requests"
+                        )
+                        .hasRole("PARENT")
+
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/appointment-requests/parent"
+                        )
+                        .hasRole("PARENT")
+
+                        .requestMatchers(
+                                HttpMethod.PATCH,
+                                "/api/appointment-requests/*/respond"
+                        )
+                        .hasRole("PARENT")
+
+                        .requestMatchers(
+                                HttpMethod.GET,
+                                "/api/appointment-requests/coordinator"
+                        )
+                        .hasRole("SUPPORT_COORDINATOR")
+
+                        .requestMatchers(
+                                HttpMethod.PATCH,
+                                "/api/appointment-requests/*/approve",
+                                "/api/appointment-requests/*/reject",
+                                "/api/appointment-requests/*/propose-time"
+                        )
+                        .hasRole("SUPPORT_COORDINATOR")
+
+                        .anyRequest()
+                        .authenticated()
                 )
 
                 .exceptionHandling(exception -> exception
