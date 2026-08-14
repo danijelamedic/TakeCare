@@ -1,115 +1,463 @@
 <section class="dashboard-page">
     <header class="dashboard-header">
-        <h1>Welcome back, {{ firstName }}.</h1>
+        <div>
+            <h1>Welcome back, {{ firstName }}.</h1>
 
-        <p>
-            Let’s continue taking care of the people who matter.
-        </p>
+            <p>
+                Here is today’s care schedule and recent activity.
+            </p>
+        </div>
+
+        @if (patient) {
+        <div class="patient-summary">
+            <span class="patient-summary__label">
+                Care profile
+            </span>
+
+            <strong>
+                {{ patient.firstName }}
+                {{ patient.lastName }}
+            </strong>
+        </div>
+        }
     </header>
 
-    <section class="dashboard-section">
+    @if (errorMessage) {
+    <div class="dashboard-alert" role="alert">
+        <span>!</span>
+
+        <p>{{ errorMessage }}</p>
+    </div>
+    }
+
+    @if (isLoading) {
+    <div class="dashboard-loading">
+        <div class="loading-spinner"></div>
+
+        <p>Loading your dashboard...</p>
+    </div>
+    } @else if (!hasCareProfile) {
+    <section class="profile-empty-state">
+        <div class="profile-empty-state__icon">
+            ♡
+        </div>
+
+        <div>
+            <h2>Create a care profile</h2>
+
+            <p>
+                Create a care profile before adding therapies,
+                appointments and calendar events.
+            </p>
+
+            <a routerLink="/parent/care-profile/create" class="primary-action">
+                Create care profile
+            </a>
+        </div>
+    </section>
+    } @else {
+    <section class="schedule-overview">
+        <!-- MINI CALENDAR -->
+        <article class="calendar-card">
+            <div class="calendar-header">
+                <button type="button" class="calendar-navigation" aria-label="Previous month" (click)="previousMonth()">
+                    ‹
+                </button>
+
+                <h2>{{ monthLabel }}</h2>
+
+                <button type="button" class="calendar-navigation" aria-label="Next month" (click)="nextMonth()">
+                    ›
+                </button>
+            </div>
+
+            <div class="calendar-weekdays">
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+                <span>Sun</span>
+            </div>
+
+            <div class="calendar-grid">
+                @for (
+                day of calendarDays;
+                track trackCalendarDay($index, day)
+                ) {
+                <button type="button" class="calendar-day" [class.calendar-day--outside]="
+                                !day.isCurrentMonth
+                            " [class.calendar-day--today]="
+                                day.isToday
+                            " [class.calendar-day--selected]="
+                                isSelectedDay(day)
+                            " [attr.aria-label]="
+                                day.date | date:'fullDate'
+                            " (click)="selectDate(day)">
+                    <span class="calendar-day__number">
+                        {{ day.dayNumber }}
+                    </span>
+
+                    @if (day.hasEvents) {
+                    <span class="calendar-day__event-dot" aria-hidden="true"></span>
+                    }
+                </button>
+                }
+            </div>
+
+            <div class="calendar-footer">
+                <div class="calendar-hint">
+                    <span class="calendar-hint__dot"></span>
+                    Scheduled activity
+                </div>
+
+                @if (!isSelectedDateToday) {
+                <button type="button" class="today-button" (click)="returnToToday()">
+                    Back to today
+                </button>
+                }
+            </div>
+        </article>
+
+        <!-- SELECTED DAY SCHEDULE -->
+        <article class="schedule-card">
+            <div class="schedule-header">
+                <div>
+                    <span class="schedule-header__eyebrow">
+                        Daily overview
+                    </span>
+
+                    <h2>{{ selectedDateLabel }}</h2>
+                </div>
+
+                <a routerLink="/parent/calendar" class="text-action">
+                    Open calendar
+                </a>
+            </div>
+
+            @if (isScheduleLoading) {
+            <div class="schedule-loading">
+                Loading schedule...
+            </div>
+            } @else if (selectedDateEvents.length === 0) {
+            <div class="schedule-empty">
+                <div class="schedule-empty__icon">
+                    ✓
+                </div>
+
+                <div>
+                    <h3>No activities scheduled</h3>
+
+                    <p>
+                        There are no therapies, appointments
+                        or events planned for this day.
+                    </p>
+                </div>
+            </div>
+            } @else {
+            <div class="schedule-list">
+                @for (
+                event of selectedDateEvents;
+                track trackEvent($index, event)
+                ) {
+                <article class="schedule-item" [class.schedule-item--therapy]="
+                                    isTherapyEvent(event)
+                                " [class.schedule-item--appointment]="
+                                    event.appointmentRequestId !== null
+                                " [class.schedule-item--taken]="
+                                    isTherapyTaken(event)
+                                " [class.schedule-item--skipped]="
+                                    isTherapySkipped(event)
+                                ">
+                    <div class="schedule-item__time">
+                        {{ eventTime(event) }}
+                    </div>
+
+                    @if (isTherapyEvent(event)) {
+                    <button type="button" class="therapy-check" [class.therapy-check--taken]="
+                                            isTherapyTaken(event)
+                                        " [class.therapy-check--skipped]="
+                                            isTherapySkipped(event)
+                                        " [disabled]="
+                                            !canMarkTherapyAsTaken(event)
+                                        " [attr.aria-checked]="
+                                            isTherapyTaken(event)
+                                        " role="checkbox" [attr.aria-label]="
+                                            'Mark ' +
+                                            event.title +
+                                            ' as taken'
+                                        " (click)="
+                                            markTherapyAsTaken(event)
+                                        ">
+                        @if (
+                        intakeInProgressKey ===
+                        getEventKey(event)
+                        ) {
+                        <span class="therapy-check__loader"></span>
+                        } @else if (
+                        isTherapyTaken(event)
+                        ) {
+                        ✓
+                        } @else if (
+                        isTherapySkipped(event)
+                        ) {
+                        –
+                        }
+                    </button>
+                    } @else {
+                    <div class="schedule-item__marker">
+                        @if (
+                        event.appointmentRequestId !== null
+                        ) {
+                        ◷
+                        } @else {
+                        !
+                        }
+                    </div>
+                    }
+
+                    <div class="schedule-item__content">
+                        <div class="schedule-item__title-row">
+                            <h3>{{ event.title }}</h3>
+
+                            @if (isTherapyTaken(event)) {
+                            <span class="status-label
+                                                       status-label--taken">
+                                Taken
+                            </span>
+                            } @else if (
+                            isTherapySkipped(event)
+                            ) {
+                            <span class="status-label
+                                                       status-label--skipped">
+                                Skipped
+                            </span>
+                            }
+                        </div>
+
+                        <p class="schedule-item__type">
+                            {{ eventTypeLabel(event) }}
+
+                            @if (event.professionalName) {
+                            <span>
+                                ·
+                                {{ event.professionalName }}
+                            </span>
+                            }
+                        </p>
+
+                        @if (event.location) {
+                        <p class="schedule-item__detail">
+                            {{ event.location }}
+                        </p>
+                        }
+
+                        @if (event.description) {
+                        <p class="schedule-item__detail">
+                            {{ event.description }}
+                        </p>
+                        }
+                    </div>
+                </article>
+                }
+            </div>
+            }
+        </article>
+    </section>
+
+    <!-- DASHBOARD STATISTICS
+    <section class="dashboard-statistics">
+        <article class="statistic-card statistic-card--therapy">
+            <div class="statistic-card__icon">
+                ✚
+            </div>
+    
+            <div class="statistic-card__content">
+                <strong>{{ activeTherapiesCount }}</strong>
+    
+                <span>
+                    Active
+                    {{
+                    activeTherapiesCount === 1
+                    ? 'therapy'
+                    : 'therapies'
+                    }}
+                </span>
+            </div>
+    
+            <a routerLink="/parent/therapies" class="statistic-card__link" aria-label="View active therapies">
+                ›
+            </a>
+        </article>
+    
+        <article class="statistic-card statistic-card--appointment">
+            <div class="statistic-card__icon">
+                ◷
+            </div>
+    
+            <div class="statistic-card__content">
+                <strong>{{ upcomingAppointmentsCount }}</strong>
+    
+                <span>
+                    Upcoming
+                    {{
+                    upcomingAppointmentsCount === 1
+                    ? 'appointment'
+                    : 'appointments'
+                    }}
+                </span>
+            </div>
+    
+            <a routerLink="/parent/appointments" class="statistic-card__link" aria-label="View upcoming appointments">
+                ›
+            </a>
+        </article>
+    
+        <article class="statistic-card statistic-card--pending">
+            <div class="statistic-card__icon">
+                ◌
+            </div>
+    
+            <div class="statistic-card__content">
+                <strong>
+                    {{ pendingAppointmentRequestsCount }}
+                </strong>
+    
+                <span>
+                    {{
+                    pendingAppointmentRequestsCount === 1
+                    ? 'Pending request'
+                    : 'Pending requests'
+                    }}
+                </span>
+            </div>
+    
+            <a routerLink="/parent/appointments" class="statistic-card__link"
+                aria-label="View pending appointment requests">
+                ›
+            </a>
+        </article>
+    </section> -->
+
+    <!-- COMPACT QUICK ACTIONS -->
+    <section class="quick-actions-section">
         <div class="section-heading">
             <h2>Quick actions</h2>
         </div>
 
-        <div class="quick-actions-grid">
-            <a [routerLink]="careProfileRoute" class="action-card" [class.action-card--loading]="isCareProfileLoading"
-                [attr.aria-disabled]="isCareProfileLoading">
-                <div class="action-icon">
-                    ♡
-                </div>
-            
-                <div class="action-content">
-                    <h3>Care profile</h3>
-            
-                    <p>
-                        @if (hasCareProfile) {
-                        View and manage the profile of the person you care for.
-                        } @else {
-                        Create the profile of the person you care for.
-                        }
-                    </p>
-            
-                    <span class="action-link">
-                        {{ careProfileActionLabel }}
-                    </span>
-                </div>
+        <div class="quick-actions">
+            <a routerLink="/parent/diary" class="quick-action">
+                <span class="quick-action__icon">
+                    🕮
+                </span>
+
+                <span>Add diary entry</span>
             </a>
 
-            <button type="button" class="action-card" disabled>
-                <div class="action-icon">
+            <a routerLink="/parent/appointments/create" class="quick-action">
+                <span class="quick-action__icon">
                     ◷
-                </div>
+                </span>
 
-                <div class="action-content">
-                    <h3>Appointments</h3>
-                    <p>
-                        Keep track of upcoming visits and important dates.
-                    </p>
+                <span>Request appointment</span>
+            </a>
 
-                    <span class="action-link">
-                        Schedule
-                    </span>
-                </div>
-            </button>
+            <a routerLink="/parent/therapies" class="quick-action">
+                <span class="quick-action__icon">
+                    𖥧
+                </span>
 
-            <button type="button" class="action-card" disabled>
-                <div class="action-icon">
-                    +
-                </div>
+                <span>View therapies</span>
+            </a>
 
-                <div class="action-content">
-                    <h3>Therapies</h3>
-                    <p>
-                        Add therapies, instructions and treatment schedules.
-                    </p>
+            <a routerLink="/parent/calendar" class="quick-action">
+                <span class="quick-action__icon">
+                    🗓
+                </span>
 
-                    <span class="action-link">
-                        Add therapy
-                    </span>
-                </div>
-            </button>
-
-            <button type="button" class="action-card" disabled>
-                <div class="action-icon">
-                    ▤
-                </div>
-
-                <div class="action-content">
-                    <h3>Documents</h3>
-                    <p>
-                        Store reports, results and other important files.
-                    </p>
-
-                    <span class="action-link">
-                        Upload document
-                    </span>
-                </div>
-            </button>
+                <span>Open calendar</span>
+            </a>
         </div>
     </section>
 
-    <section class="dashboard-section recent-section">
-        <div class="section-heading">
-            <h2>Recent activity</h2>
-            
+    <!-- RECENT ACTIVITY -->
+    <section class="recent-section">
+        <div class="section-heading section-heading--activity">
+            <div>
+                <h2>Recent activity</h2>
+
+                <p>
+                    The latest updates in the care profile.
+                </p>
+            </div>
         </div>
 
-        <div class="empty-activity">
-            <div class="empty-icon">
+        @if (recentActivity.length === 0) {
+        <div class="activity-empty">
+            <div class="activity-empty__icon">
                 ◌
             </div>
 
             <div>
-                <h3>No activity yet</h3>
+                <h3>No recent activity</h3>
+
                 <p>
-                    @if (hasCareProfile) {
-                    Appointments, therapies and other activity will appear here.
-                    } @else {
-                    Create a care profile to start organising important information.
-                    }
+                    Diary entries, therapies and appointment
+                    updates will appear here.
                 </p>
             </div>
         </div>
+        } @else {
+        <div class="activity-list">
+            @for (
+            activity of recentActivity;
+            track trackActivity($index, activity)
+            ) {
+            <article class="activity-item">
+                <div class="activity-item__icon" [class.activity-item__icon--diary]="
+                                    activity.type === 'DIARY'
+                                " [class.activity-item__icon--therapy]="
+                                    activity.type === 'THERAPY' ||
+                                    activity.type === 'INTAKE'
+                                " [class.activity-item__icon--appointment]="
+                                    activity.type === 'APPOINTMENT'
+                                ">
+                    @switch (activity.type) {
+                    @case ('DIARY') {
+                    <span>≡</span>
+                    }
+
+                    @case ('THERAPY') {
+                    <span>+</span>
+                    }
+
+                    @case ('INTAKE') {
+                    <span>✓</span>
+                    }
+
+                    @case ('APPOINTMENT') {
+                    <span>◷</span>
+                    }
+                    }
+                </div>
+
+                <div class="activity-item__content">
+                    <h3>{{ activity.title }}</h3>
+
+                    <p>{{ activity.description }}</p>
+                </div>
+
+                <time class="activity-item__date" [attr.datetime]="activity.date">
+                    {{
+                    activity.date
+                    | date:'MMM d, h:mm a'
+                    }}
+                </time>
+            </article>
+            }
+        </div>
+        }
     </section>
+    }
 </section>
