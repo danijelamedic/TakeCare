@@ -17,6 +17,7 @@ import { TherapyList } from './features/therapy/therapy-list/therapy-list';
 import { ProfessionalContactList } from './features/professional-contact/professional-contact-list/professional-contact-list';
 import { ProfessionalContactDetails } from './features/professional-contact/professional-contact-details/professional-contact-details';
 import {AppointmentRequestList} from './features/appointment-request/appointment-request-list/appointment-request-list';
+import { Calendar } from './features/calendar/calendar';
 
 export const routes: Routes = [
     {
@@ -145,6 +146,11 @@ export const routes: Routes = [
                             component.AppointmentRequestForm
                     ),
                 title: 'New appointment request | TakeCare'
+            },
+            {
+                path: 'calendar',
+                component: Calendar,
+                title: 'Calendar | TakeCare'
             }
         ]
     },
@@ -213,6 +219,11 @@ export const routes: Routes = [
                 path: 'appointments',
                 component: AppointmentRequestList,
                 title: 'Appointment requests | TakeCare'
+            },
+            {
+                path: 'calendar',
+                component: Calendar,
+                title: 'Calendar | TakeCare'
             }
         ]
     },
