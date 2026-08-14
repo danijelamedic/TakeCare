@@ -1,0 +1,390 @@
+<section class="appointment-page">
+
+    <header class="appointment-header">
+        <div>
+            <h1>Appointment requests</h1>
+
+            <p>
+                @if (isCoordinator) {
+                Review and manage appointment requests
+                for your assigned patient.
+                } @else {
+                Request appointments and follow their
+                current status.
+                }
+            </p>
+        </div>
+
+        @if (!isCoordinator) {
+        <button class="primary-button" type="button" (click)="openCreateRequest()">
+            <span class="button-icon">+</span>
+            <span>New request</span>
+        </button>
+        }
+    </header>
+
+    @if (successMessage) {
+    <div class="message success-message">
+        <span aria-hidden="true">✓</span>
+        {{ successMessage }}
+    </div>
+    }
+
+    @if (errorMessage) {
+    <div class="message error-message">
+        <span aria-hidden="true">!</span>
+        {{ errorMessage }}
+    </div>
+    }
+
+    <section class="appointment-toolbar">
+        <div class="filters" aria-label="Filter appointment requests">
+            @for (filter of filters; track filter.value) {
+            <button class="filter-button" type="button" [class.filter-button--active]="
+                        selectedFilter === filter.value
+                    " [disabled]="isLoading" (click)="selectFilter(filter.value)">
+                {{ filter.label }}
+            </button>
+            }
+        </div>
+
+        <span class="request-count">
+            {{ filteredRequests.length }}
+            {{
+            filteredRequests.length === 1
+            ? 'request'
+            : 'requests'
+            }}
+        </span>
+    </section>
+
+    @if (isLoading) {
+    <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading appointment requests...</p>
+    </div>
+    } @else if (
+    !errorMessage &&
+    filteredRequests.length === 0
+    ) {
+    <div class="empty-state">
+        <div class="appointment-calendar-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+                <rect x="4" y="5.5" width="16" height="14" rx="2" />
+                <path d="M8 3.5v4M16 3.5v4M4 9.5h16" />
+                <path d="M8 13h3M8 16h5" />
+            </svg>
+        </div>
+
+        <h2>No appointment requests found</h2>
+
+        <p>
+            @if (
+            selectedFilter === 'ALL' &&
+            !isCoordinator
+            ) {
+            Create the first request to begin
+            organising an appointment.
+            } @else if (
+            selectedFilter === 'ALL' &&
+            isCoordinator
+            ) {
+            There are currently no requests to review.
+            } @else {
+            Try selecting another status.
+            }
+        </p>
+
+        @if (
+        selectedFilter === 'ALL' &&
+        !isCoordinator
+        ) {
+        <button class="primary-button" type="button" (click)="openCreateRequest()">
+            <span class="button-icon">+</span>
+            <span>Create first request</span>
+        </button>
+        }
+    </div>
+    } @else {
+    <div class="appointment-list">
+
+        @for (
+        request of filteredRequests;
+        track trackRequestById($index, request)
+        ) {
+        <article class="appointment-card">
+
+            <div class="card-heading">
+                <div class="appointment-calendar-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="4" y="5.5" width="16" height="14" rx="2" />
+                        <path d="M8 3.5v4M16 3.5v4M4 9.5h16" />
+                        <path d="M8 13h3M8 16h5" />
+                    </svg>
+                </div>
+
+                <div class="heading-content">
+                    <div class="title-row">
+                        <h2>
+                            {{ request.professionalName }}
+                        </h2>
+
+                        <span class="status-badge" [class.status-badge--pending]="
+                                        request.status === 'PENDING'
+                                    " [class.status-badge--approved]="
+                                        request.status === 'APPROVED' ||
+                                        request.status ===
+                                            'PARENT_ACCEPTED'
+                                    " [class.status-badge--rejected]="
+                                        request.status === 'REJECTED' ||
+                                        request.status ===
+                                            'PARENT_REJECTED'
+                                    " [class.status-badge--proposed]="
+                                        request.status ===
+                                            'RESCHEDULE_PROPOSED'
+                                    ">
+                            {{
+                            getStatusLabel(
+                            request.status
+                            )
+                            }}
+                        </span>
+                    </div>
+
+                    <p class="profession">
+                        {{
+                        getProfessionLabel(
+                        request.professionalProfession
+                        )
+                        }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="request-details">
+                @if (isCoordinator) {
+                <div class="detail-item">
+                    <span class="detail-label">
+                        Patient
+                    </span>
+
+                    <strong>
+                        {{ request.patientName }}
+                    </strong>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">
+                        Requested by
+                    </span>
+
+                    <strong>
+                        {{ request.requestedByName }}
+                    </strong>
+                </div>
+                }
+
+                <div class="detail-item">
+                    <span class="detail-label">
+                        Requested time
+                    </span>
+
+                    <strong>
+                        {{
+                        request.requestedDateTime
+                        | date:'dd MMM yyyy, HH:mm'
+                        }}
+                    </strong>
+                </div>
+
+                @if (request.proposedDateTime) {
+                <div class="detail-item proposed-time">
+                    <span class="detail-label">
+                        Proposed time
+                    </span>
+
+                    <strong>
+                        {{
+                        request.proposedDateTime
+                        | date:'dd MMM yyyy, HH:mm'
+                        }}
+                    </strong>
+                </div>
+                }
+            </div>
+
+            <div class="reason-section">
+                <span class="detail-label">
+                    Reason for appointment
+                </span>
+
+                <p>{{ request.reason }}</p>
+            </div>
+
+            @if (request.coordinatorComment) {
+            <div class="comment-section">
+                <span class="detail-label">
+                    Coordinator comment
+                </span>
+
+                <p>
+                    {{ request.coordinatorComment }}
+                </p>
+            </div>
+            }
+
+            @if (
+            !isCoordinator &&
+            request.processedByName
+            ) {
+            <p class="processed-info">
+                Processed by
+                {{ request.processedByName }}
+            
+                @if (request.resolvedAt) {
+                on
+                {{
+                request.resolvedAt
+                | date:'dd MMM yyyy, HH:mm'
+                }}
+                }
+            </p>
+            }
+
+            @if (
+            isCoordinator &&
+            request.status === 'PENDING'
+            ) {
+            <div class="card-actions">
+                <button class="primary-button compact-button" type="button" [disabled]="
+                                    processingRequestId !== null
+                                " (click)="approveRequest(request)">
+                    {{
+                    processingRequestId ===
+                    request.id
+                    ? 'Processing...'
+                    : 'Approve'
+                    }}
+                </button>
+
+                <button class="secondary-button" type="button" [disabled]="
+                                    processingRequestId !== null
+                                " (click)="
+                                    openProposeTimeAction(request)
+                                ">
+                    Propose new time
+                </button>
+
+                <button class="danger-text-button" type="button" [disabled]="
+                                    processingRequestId !== null
+                                " (click)="openRejectAction(request)">
+                    Reject
+                </button>
+            </div>
+            }
+
+            @if (
+            !isCoordinator &&
+            request.status ===
+            'RESCHEDULE_PROPOSED'
+            ) {
+            <div class="card-actions">
+                <button class="primary-button compact-button" type="button" [disabled]="
+                                    processingRequestId !== null
+                                " (click)="
+                                    respondToProposal(request, true)
+                                ">
+                    {{
+                    processingRequestId ===
+                    request.id
+                    ? 'Saving...'
+                    : 'Accept proposed time'
+                    }}
+                </button>
+
+                <button class="secondary-button" type="button" [disabled]="
+                                    processingRequestId !== null
+                                " (click)="
+                                    respondToProposal(request, false)
+                                ">
+                    Decline
+                </button>
+            </div>
+            }
+
+            @if (
+            activeActionRequestId === request.id &&
+            activeCoordinatorAction === 'REJECT'
+            ) {
+            <section class="action-panel">
+                <h3>Reject appointment request</h3>
+
+                <label for="reject-comment-{{ request.id }}">
+                    Reason for rejection
+                </label>
+
+                <textarea id="reject-comment-{{ request.id }}" rows="4" maxlength="1000"
+                    [(ngModel)]="coordinatorComment"
+                    placeholder="Explain why the request cannot be approved"></textarea>
+
+                <div class="panel-actions">
+                    <button class="danger-button" type="button" [disabled]="
+                                        processingRequestId !== null
+                                    " (click)="submitRejection(request)">
+                        Confirm rejection
+                    </button>
+
+                    <button class="text-button" type="button" [disabled]="
+                                        processingRequestId !== null
+                                    " (click)="closeCoordinatorAction()">
+                        Cancel
+                    </button>
+                </div>
+            </section>
+            }
+
+            @if (
+            activeActionRequestId === request.id &&
+            activeCoordinatorAction ===
+            'PROPOSE_TIME'
+            ) {
+            <section class="action-panel">
+                <h3>Propose a new time</h3>
+
+                <label for="proposed-time-{{ request.id }}">
+                    New date and time
+                </label>
+
+                <input id="proposed-time-{{ request.id }}" type="datetime-local" [min]="minimumDateTime"
+                    [(ngModel)]="proposedDateTime" />
+
+                <label for="proposal-comment-{{ request.id }}">
+                    Comment
+                </label>
+
+                <textarea id="proposal-comment-{{ request.id }}" rows="4" maxlength="1000"
+                    [(ngModel)]="coordinatorComment"
+                    placeholder="Explain why a different time is being proposed"></textarea>
+
+                <div class="panel-actions">
+                    <button class="primary-button compact-button" type="button" [disabled]="
+                                        processingRequestId !== null
+                                    " (click)="submitProposedTime(request)">
+                        Submit new time
+                    </button>
+
+                    <button class="text-button" type="button" [disabled]="
+                                        processingRequestId !== null
+                                    " (click)="closeCoordinatorAction()">
+                        Cancel
+                    </button>
+                </div>
+            </section>
+            }
+
+        </article>
+        }
+    </div>
+    }
+
+</section>
