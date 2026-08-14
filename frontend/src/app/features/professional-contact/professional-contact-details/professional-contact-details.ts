@@ -5,6 +5,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ProfessionalContactResponse, ProfessionalType } from '../../../core/models/professional-contact.models';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { AppointmentRequestResponse } from '../../../core/models/appointment-request.models';
+import { AppointmentRequestService } from '../../../core/services/appointment-request.service';
 import { PatientService } from '../../../core/services/patient.service';
 import { ProfessionalContactService } from '../../../core/services/professional-contact.service';
 
@@ -20,6 +22,8 @@ import { ProfessionalContactService } from '../../../core/services/professional-
 export class ProfessionalContactDetails implements OnInit {
 
     professional: ProfessionalContactResponse | null = null;
+    nextAppointment: AppointmentRequestResponse | null = null;
+    hasOpenAppointmentRequest = false;
 
     patientId: number | null = null;
     contactId: number | null = null;
@@ -31,11 +35,11 @@ export class ProfessionalContactDetails implements OnInit {
     constructor(
         private readonly authService: AuthService,
         private readonly patientService: PatientService,
-        private readonly professionalContactService:
-            ProfessionalContactService,
+        private readonly professionalContactService: ProfessionalContactService,
         private readonly activatedRoute: ActivatedRoute,
         private readonly router: Router,
-        private readonly changeDetectorRef: ChangeDetectorRef
+        private readonly changeDetectorRef: ChangeDetectorRef,
+        private readonly appointmentRequestService: AppointmentRequestService
     ) {}
 
     ngOnInit(): void {
@@ -147,6 +151,8 @@ export class ProfessionalContactDetails implements OnInit {
                 next: professional => {
                     this.professional = professional;
                     this.isLoading = false;
+
+                    this.loadNextAppointment();
                     this.refreshView();
                 },
                 error: error => {
@@ -219,5 +225,134 @@ export class ProfessionalContactDetails implements OnInit {
 
     private refreshView(): void {
         this.changeDetectorRef.detectChanges();
+    }
+
+    get nextAppointmentDateTime(): string | null {
+        if (!this.nextAppointment) {
+            return null;
+        }
+
+        if (
+            this.nextAppointment.status ===
+            'PARENT_ACCEPTED'
+        ) {
+            return this.nextAppointment.proposedDateTime;
+        }
+
+        return this.nextAppointment.requestedDateTime;
+    }
+
+    private loadNextAppointment(): void {
+        if (this.contactId === null) {
+            return;
+        }
+
+        const requests$ = this.isCoordinator
+            ? this.appointmentRequestService
+                .getCoordinatorRequests()
+            : this.appointmentRequestService
+                .getParentRequests();
+
+        requests$.subscribe({
+            next: requests => {
+                this.nextAppointment =
+                    this.findNextAppointment(requests);
+
+                this.hasOpenAppointmentRequest =
+                    this.hasOpenRequest(requests);
+
+                this.refreshView();
+            },
+            error: () => {
+                this.nextAppointment = null;
+                this.hasOpenAppointmentRequest = false;
+                this.refreshView();
+            }
+        });
+    }
+
+    private findNextAppointment(
+        requests: AppointmentRequestResponse[]
+    ): AppointmentRequestResponse | null {
+        if (this.contactId === null) {
+            return null;
+        }
+
+        const now = Date.now();
+
+        const confirmedRequests = requests
+            .filter(request =>
+                request.professionalContactId ===
+                    this.contactId &&
+                (
+                    request.status === 'APPROVED' ||
+                    request.status === 'PARENT_ACCEPTED'
+                )
+            )
+            .filter(request => {
+                const dateTime =
+                    request.status === 'PARENT_ACCEPTED'
+                        ? request.proposedDateTime
+                        : request.requestedDateTime;
+
+                return (
+                    dateTime !== null &&
+                    new Date(dateTime).getTime() > now
+                );
+            })
+            .sort((first, second) =>
+                this.getAppointmentTimestamp(first) -
+                this.getAppointmentTimestamp(second)
+            );
+
+        return confirmedRequests[0] ?? null;
+    }
+
+    private getAppointmentTimestamp(
+        request: AppointmentRequestResponse
+    ): number {
+        const dateTime =
+            request.status === 'PARENT_ACCEPTED'
+                ? request.proposedDateTime
+                : request.requestedDateTime;
+
+        return dateTime
+            ? new Date(dateTime).getTime()
+            : Number.MAX_SAFE_INTEGER;
+    }
+
+    private hasOpenRequest( requests: AppointmentRequestResponse[]): boolean {
+        if (this.contactId === null) {
+            return false;
+        }
+
+        return requests.some(request =>
+            request.professionalContactId ===
+                this.contactId &&
+            (
+                request.status === 'PENDING' ||
+                request.status ===
+                    'RESCHEDULE_PROPOSED'
+            )
+        );
+    }
+
+    requestAppointment(): void {
+        if (
+            this.isCoordinator ||
+            this.contactId === null
+        ) {
+            return;
+        }
+
+        this.router.navigate(
+            ['/parent/appointments/create'],
+            {
+                queryParams: {
+                    professionalContactId:
+                        this.contactId
+                }
+            }
+        );
     }
 }

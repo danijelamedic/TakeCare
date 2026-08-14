@@ -16,6 +16,7 @@ import { Diary } from './features/diary/diary';
 import { TherapyList } from './features/therapy/therapy-list/therapy-list';
 import { ProfessionalContactList } from './features/professional-contact/professional-contact-list/professional-contact-list';
 import { ProfessionalContactDetails } from './features/professional-contact/professional-contact-details/professional-contact-details';
+import {AppointmentRequestList} from './features/appointment-request/appointment-request-list/appointment-request-list';
 
 export const routes: Routes = [
     {
@@ -128,6 +129,22 @@ export const routes: Routes = [
                 path: 'professionals/:id',
                 component: ProfessionalContactDetails,
                 title: 'Professional details | TakeCare'
+            },
+            {
+                path: 'appointments',
+                component: AppointmentRequestList,
+                title: 'Appointment requests | TakeCare'
+            },
+            {
+                path: 'appointments/create',
+                loadComponent: () =>
+                    import(
+                        './features/appointment-request/appointment-request-form/appointment-request-form'
+                    ).then(
+                        component =>
+                            component.AppointmentRequestForm
+                    ),
+                title: 'New appointment request | TakeCare'
             }
         ]
     },
@@ -191,7 +208,12 @@ export const routes: Routes = [
                 path: 'professionals/:id',
                 component: ProfessionalContactDetails,
                 title: 'Professional details | TakeCare'
-            }   
+            },
+            {
+                path: 'appointments',
+                component: AppointmentRequestList,
+                title: 'Appointment requests | TakeCare'
+            }
         ]
     },
     {
