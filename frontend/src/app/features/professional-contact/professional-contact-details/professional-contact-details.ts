@@ -6,9 +6,11 @@ import { ProfessionalContactResponse, ProfessionalType } from '../../../core/mod
 
 import { AuthService } from '../../../core/services/auth.service';
 import { AppointmentRequestResponse } from '../../../core/models/appointment-request.models';
+import { DocumentResponse, DocumentType } from '../../../core/models/document.models';
 import { AppointmentRequestService } from '../../../core/services/appointment-request.service';
 import { PatientService } from '../../../core/services/patient.service';
 import { ProfessionalContactService } from '../../../core/services/professional-contact.service';
+import { DocumentService } from '../../../core/services/document.service';
 
 @Component({
     selector: 'app-professional-contact-details',
@@ -32,8 +34,17 @@ export class ProfessionalContactDetails implements OnInit {
     isLoading = true;
     errorMessage = '';
 
+    documents: DocumentResponse[] = [];
+
+    isLoadingDocuments = false;
+    documentsErrorMessage = '';
+
+    viewingDocumentId: number | null = null;
+    downloadingDocumentId: number | null = null;
+
     constructor(
         private readonly authService: AuthService,
+        private readonly documentService: DocumentService,
         private readonly patientService: PatientService,
         private readonly professionalContactService: ProfessionalContactService,
         private readonly activatedRoute: ActivatedRoute,
@@ -128,7 +139,7 @@ export class ProfessionalContactDetails implements OnInit {
         });
     }
 
-    private loadProfessional(): void {
+    public loadProfessional(): void {
         if (
             this.patientId === null ||
             this.contactId === null
@@ -153,6 +164,7 @@ export class ProfessionalContactDetails implements OnInit {
                     this.isLoading = false;
 
                     this.loadNextAppointment();
+                    this.loadIssuedDocuments();
                     this.refreshView();
                 },
                 error: error => {
@@ -354,5 +366,145 @@ export class ProfessionalContactDetails implements OnInit {
                 }
             }
         );
+    }
+
+    loadIssuedDocuments(): void {
+        if (!this.patientId || !this.contactId) {
+            return;
+        }
+
+        this.isLoadingDocuments = true;
+        this.documentsErrorMessage = '';
+
+        this.documentService
+            .getProfessionalDocuments(this.patientId, this.contactId)
+            .subscribe({
+            next: (documents) => {
+                this.documents = documents;
+                this.isLoadingDocuments = false;
+                this.refreshView();
+            },
+            error: (error) => {
+                console.error('Failed to load issued documents:', error);
+
+                this.documents = [];
+                this.isLoadingDocuments = false;
+                this.documentsErrorMessage =
+                'The documents issued by this professional could not be loaded.';
+
+                this.refreshView();
+            }
+            });
+    }
+
+    viewDocument(document: DocumentResponse): void {
+        this.viewingDocumentId = document.id;
+
+        this.documentService.viewDocument(document.id).subscribe({
+            next: (blob) => {
+            const documentUrl = URL.createObjectURL(blob);
+            window.open(documentUrl, '_blank', 'noopener,noreferrer');
+
+            setTimeout(() => URL.revokeObjectURL(documentUrl), 60_000);
+
+            this.viewingDocumentId = null;
+            this.refreshView();
+            },
+            error: (error) => {
+            console.error('Failed to open document:', error);
+            this.viewingDocumentId = null;
+            this.refreshView();
+            }
+        });
+    }
+
+    downloadDocument(document: DocumentResponse): void {
+        this.downloadingDocumentId = document.id;
+
+        this.documentService.downloadDocument(document.id).subscribe({
+            next: (response) => {
+            const blob = response.body;
+
+            if (!blob) {
+                this.downloadingDocumentId = null;
+                this.refreshView();
+                return;
+            }
+
+            const documentUrl = URL.createObjectURL(blob);
+            const link = window.document.createElement('a');
+
+            link.href = documentUrl;
+            link.download = document.originalFileName;
+
+            window.document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            URL.revokeObjectURL(documentUrl);
+
+            this.downloadingDocumentId = null;
+            this.refreshView();
+            },
+            error: (error) => {
+            console.error('Failed to download document:', error);
+            this.downloadingDocumentId = null;
+            this.refreshView();
+            }
+        });
+    }
+
+    getDocumentTypeLabel(documentType: DocumentType): string {
+        const labels: Record<DocumentType, string> = {
+            MEDICAL_REPORT: 'Medical report',
+            PRESCRIPTION: 'Prescription',
+            LAB_RESULT: 'Lab result',
+            THERAPY_PLAN: 'Therapy plan',
+            ASSESSMENT: 'Assessment',
+            VACCINATION_RECORD: 'Vaccination record',
+            SCHOOL_DOCUMENT: 'School document',
+            SOCIAL_SERVICE_DOCUMENT: 'Social service document',
+            REFERRAL: 'Referral',
+            INSURANCE_DOCUMENT: 'Insurance document',
+            OTHER: 'Other'
+        };
+
+        return labels[documentType];
+    }
+
+    formatFileSize(size: number): string {
+        if (size < 1024) {
+            return `${size} B`;
+        }
+
+        if (size < 1024 * 1024) {
+            return `${(size / 1024).toFixed(1)} KB`;
+        }
+
+        return `${(size / (1024 * 1024)).toFixed(1)} MB`;
+    }
+
+    openAppointmentInCalendar(): void {
+        const dateTime = this.nextAppointmentDateTime;
+
+        if (!dateTime || !this.nextAppointment) {
+            return;
+        }
+
+        const calendarRoute = this.isCoordinator
+            ? '/coordinator/calendar'
+            : '/parent/calendar';
+
+        const calendarUrl = this.router.createUrlTree(
+            [calendarRoute],
+            {
+            queryParams: {
+                date: dateTime.substring(0, 10),
+                appointmentRequestId: this.nextAppointment.id
+            }
+            }
+        );
+
+        this.router.navigateByUrl(calendarUrl);
     }
 }

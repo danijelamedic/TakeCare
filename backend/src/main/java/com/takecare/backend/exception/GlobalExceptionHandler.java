@@ -6,6 +6,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -167,6 +168,56 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(
                 HttpStatus.FORBIDDEN,
                 exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(DocumentNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleDocumentNotFound(
+            DocumentNotFoundException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(DocumentAccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleDocumentAccessDenied(
+            DocumentAccessDeniedException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.FORBIDDEN,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(InvalidDocumentFileException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidDocumentFile(
+            InvalidDocumentFileException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(DocumentStorageException.class)
+    public ResponseEntity<Map<String, Object>> handleDocumentStorage(
+            DocumentStorageException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "The document could not be processed."
+        );
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Map<String, Object>> handleMaxUploadSizeExceeded(
+            MaxUploadSizeExceededException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.PAYLOAD_TOO_LARGE,
+                "The selected file exceeds the maximum allowed size of 10 MB."
         );
     }
 

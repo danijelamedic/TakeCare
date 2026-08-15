@@ -85,10 +85,13 @@
             </p>
     
             <h2>
-                {{
-                nextAppointmentDateTime
-                | date:'EEEE, dd MMMM yyyy'
-                }}
+                <button type="button" class="appointment-date-link" title="Open this appointment in the calendar"
+                    (click)="openAppointmentInCalendar()">
+                    {{
+                    nextAppointmentDateTime
+                    | date:'EEEE, dd MMMM yyyy'
+                    }}
+                </button>
             </h2>
     
             <p class="appointment-time">
@@ -264,6 +267,108 @@
                 </strong>
             </div>
         </div>
+    </article>
+
+    <article class="profile-card issued-documents-card">
+        <div class="documents-heading">
+            <div class="card-heading">
+                <h2>
+                
+                    Documents issued by
+                    {{ professional.firstName }} {{ professional.lastName }}.
+                </h2>
+            </div>
+    
+            @if (!isLoadingDocuments) {
+            <span class="documents-count">
+                {{ documents.length }}
+                {{ documents.length === 1 ? 'document' : 'documents' }}
+            </span>
+            }
+        </div>
+    
+        @if (isLoadingDocuments) {
+        <div class="documents-state">
+            <span class="spinner"></span>
+            <span>Loading documents...</span>
+        </div>
+        } @else if (documentsErrorMessage) {
+        <div class="documents-state documents-state--error">
+            <span>{{ documentsErrorMessage }}</span>
+    
+            <button type="button" (click)="loadIssuedDocuments()">
+                Try again
+            </button>
+        </div>
+        } @else if (documents.length === 0) {
+        <div class="documents-empty">
+            <div class="documents-empty__icon">🗐</div>
+    
+            <div>
+                <strong>No issued documents</strong>
+                <p>
+                    There are currently no documents associated with this professional.
+                </p>
+            </div>
+        </div>
+        } @else {
+        <div class="issued-documents-list">
+            @for (document of documents; track document.id) {
+            <article class="issued-document">
+                <div class="issued-document__icon">🗐</div>
+    
+                <div class="issued-document__content">
+                    <div class="issued-document__heading">
+                        <h3>{{ document.title }}</h3>
+    
+                        <span class="document-type">
+                            {{ getDocumentTypeLabel(document.documentType) }}
+                        </span>
+                    </div>
+    
+                    <p class="issued-document__file">
+                        {{ document.originalFileName }}
+                    </p>
+    
+                    <div class="issued-document__metadata">
+                        <span>{{ formatFileSize(document.fileSize) }}</span>
+    
+                        @if (document.documentDate) {
+                        <span>
+                            Document date:
+                            {{ document.documentDate | date: 'MMM d, y' }}
+                        </span>
+                        }
+    
+                        <span>
+                            Uploaded {{ document.uploadedAt | date: 'MMM d, y' }}
+                        </span>
+                    </div>
+                </div>
+    
+                <div class="issued-document__actions">
+                    <button type="button" class="document-action document-action--primary"
+                        [disabled]="viewingDocumentId === document.id" (click)="viewDocument(document)">
+                        {{
+                        viewingDocumentId === document.id
+                        ? 'Opening...'
+                        : 'View'
+                        }}
+                    </button>
+    
+                    <button type="button" class="document-action" [disabled]="downloadingDocumentId === document.id"
+                        (click)="downloadDocument(document)">
+                        {{
+                        downloadingDocumentId === document.id
+                        ? 'Downloading...'
+                        : 'Download'
+                        }}
+                    </button>
+                </div>
+            </article>
+            }
+        </div>
+        }
     </article>
 
     @if (professional.notes) {
