@@ -1,0 +1,410 @@
+<section class="document-form-page">
+
+    <button class="back-button" type="button" (click)="cancel()">
+        <span aria-hidden="true">←</span>
+        Back to documents
+    </button>
+
+    <header class="form-header">
+        <!-- <div class="header-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+                <path d="M6 3.5h8l4 4v13H6z" />
+                <path d="M14 3.5v4h4" />
+                <path d="M9 12h6M9 15.5h6" />
+            </svg>
+        </div> -->
+
+        <div>
+            <h1>
+                {{
+                isEditMode
+                ? 'Edit document'
+                : 'Upload document'
+                }}
+            </h1>
+
+            <p>
+                {{
+                isEditMode
+                ? 'Update the document information and visibility.'
+                : 'Add a report, assessment or another important file.'
+                }}
+            </p>
+        </div>
+    </header>
+
+    @if (errorMessage) {
+    <div class="message error-message">
+        <span aria-hidden="true">!</span>
+        {{ errorMessage }}
+    </div>
+    }
+
+    @if (isLoading) {
+    <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading document information...</p>
+    </div>
+    } @else if (!errorMessage) {
+    <form class="document-form" [formGroup]="form" (ngSubmit)="submit()">
+        <section class="form-section">
+            <div class="section-heading">
+                <div class="section-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 3.5h8l4 4v13H6z" />
+                        <path d="M14 3.5v4h4" />
+                    </svg>
+                </div>
+
+                <div>
+                    <h2>Document information</h2>
+                    <p>
+                        Add a clear title and choose the
+                        appropriate category.
+                    </p>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="field field--full">
+                    <label for="title">
+                        Title
+                        <span aria-hidden="true">*</span>
+                    </label>
+
+                    <input id="title" type="text" formControlName="title" maxlength="200"
+                        placeholder="e.g. Neurology examination report" />
+
+                    @if (
+                    titleControl.touched &&
+                    titleControl.hasError('required')
+                    ) {
+                    <p class="field-error">
+                        Title is required.
+                    </p>
+                    }
+
+                    @if (
+                    titleControl.touched &&
+                    titleControl.hasError('maxlength')
+                    ) {
+                    <p class="field-error">
+                        Title must not exceed 200 characters.
+                    </p>
+                    }
+                </div>
+
+                <div class="field">
+                    <label for="documentType">
+                        Document type
+                        <span aria-hidden="true">*</span>
+                    </label>
+
+                    <select id="documentType" formControlName="documentType">
+                        @for (
+                        type of documentTypes;
+                        track type.value
+                        ) {
+                        <option [value]="type.value">
+                            {{ type.label }}
+                        </option>
+                        }
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="documentDate">
+                        Document date
+                    </label>
+
+                    <input id="documentDate" type="date" formControlName="documentDate" [max]="maximumDocumentDate" />
+
+                    <p class="field-help">
+                        The date shown on the document, if known.
+                    </p>
+                </div>
+
+                <div class="field field--full">
+                    <label for="issuedById">
+                        Issued by
+                    </label>
+                
+                    <select id="issuedById" formControlName="issuedById" [disabled]="isLoadingProfessionals">
+                        <option [ngValue]="null">
+                            No professional selected
+                        </option>
+                
+                        @for (
+                        professional of professionals;
+                        track professional.id
+                        ) {
+                        <option [ngValue]="professional.id">
+                            {{ professional.fullName }}
+                            ·
+                            {{
+                            getProfessionalTypeLabel(
+                            professional.professionalType
+                            )
+                            }}
+                        </option>
+                        }
+                    </select>
+                
+                    @if (isLoadingProfessionals) {
+                    <p class="field-help">
+                        Loading connected professionals...
+                    </p>
+                    } @else if (professionalsErrorMessage) {
+                    <p class="field-error">
+                        {{ professionalsErrorMessage }}
+                    </p>
+                    } @else if (professionals.length === 0) {
+                    <p class="field-help">
+                        No professionals are currently connected
+                        to this patient.
+                    </p>
+                    } @else {
+                    <p class="field-help">
+                        Optional. Select the professional or institution
+                        representative who issued the document.
+                    </p>
+                    }
+                </div>
+
+                <div class="field field--full">
+                    <label for="description">
+                        Description
+                    </label>
+
+                    <textarea id="description" formControlName="description" rows="4" maxlength="2000"
+                        placeholder="Add a short note about this document..."></textarea>
+
+                    <div class="field-footer">
+                        @if (
+                        descriptionControl.touched &&
+                        descriptionControl.hasError(
+                        'maxlength'
+                        )
+                        ) {
+                        <p class="field-error">
+                            Description must not exceed
+                            2000 characters.
+                        </p>
+                        } @else {
+                        <span></span>
+                        }
+
+                        <span class="character-count">
+                            {{
+                            descriptionControl.value.length
+                            }}/2000
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        @if (!isEditMode) {
+        <section class="form-section">
+            <div class="section-heading">
+                <div class="section-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 16V5" />
+                        <path d="m8 9 4-4 4 4" />
+                        <path d="M5 15v4h14v-4" />
+                    </svg>
+                </div>
+
+                <div>
+                    <h2>File</h2>
+                    <p>
+                        Select a PDF, JPEG or PNG file.
+                    </p>
+                </div>
+            </div>
+
+            <input #fileInput class="native-file-input" id="documentFile" type="file"
+                accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" (change)="onFileSelected($event)" />
+
+            @if (!selectedFile) {
+            <label class="file-drop-area" for="documentFile" [class.file-drop-area--error]="
+                                !!fileErrorMessage
+                            ">
+                <div class="upload-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 16V5" />
+                        <path d="m8 9 4-4 4 4" />
+                        <path d="M5 15v4h14v-4" />
+                    </svg>
+                </div>
+
+                <strong>Choose a file</strong>
+
+                <span>
+                    PDF, JPEG or PNG · Maximum 10 MB
+                </span>
+            </label>
+            } @else {
+            <div class="selected-file">
+                <div class="selected-file-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 3.5h8l4 4v13H6z" />
+                        <path d="M14 3.5v4h4" />
+                    </svg>
+                </div>
+
+                <div class="selected-file-info">
+                    <strong>
+                        {{ selectedFile.name }}
+                    </strong>
+
+                    <span>
+                        {{
+                        selectedFile.size / 1024 / 1024
+                        | number: '1.1-1'
+                        }}
+                        MB
+                    </span>
+                </div>
+
+                <button class="remove-file-button" type="button" (click)="
+                                    removeSelectedFile(fileInput)
+                                ">
+                    Remove
+                </button>
+            </div>
+            }
+
+            @if (fileErrorMessage) {
+            <p class="file-error">
+                {{ fileErrorMessage }}
+            </p>
+            }
+        </section>
+        } @else {
+        <section class="form-section">
+            <div class="section-heading">
+                <div class="section-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 3.5h8l4 4v13H6z" />
+                        <path d="M14 3.5v4h4" />
+                    </svg>
+                </div>
+
+                <div>
+                    <h2>Attached file</h2>
+                    <p>
+                        The existing file is not replaced
+                        when editing its information.
+                    </p>
+                </div>
+            </div>
+
+            <div class="existing-file">
+                <div class="selected-file-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 3.5h8l4 4v13H6z" />
+                        <path d="M14 3.5v4h4" />
+                    </svg>
+                </div>
+
+                <strong>
+                    {{ existingFileName }}
+                </strong>
+            </div>
+        </section>
+        }
+
+        <section class="form-section">
+            <div class="section-heading">
+                <div class="section-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 3.5 19 6v5.5c0 4-2.8 7.3-7 9-4.2-1.7-7-5-7-9V6z" />
+                        <path d="M9.5 12 11 13.5l3.5-3.5" />
+                    </svg>
+                </div>
+
+                <div>
+                    <h2>Visibility</h2>
+                    <p>
+                        Control who can access this document.
+                    </p>
+                </div>
+            </div>
+
+            @if (!isCoordinator) {
+            <div class="visibility-options">
+                <label class="visibility-option" [class.visibility-option--selected]="
+                                form.controls.visibility.value ===
+                                'SHARED'
+                            ">
+                    <input type="radio" formControlName="visibility" value="SHARED" />
+
+                    <span class="radio-control"></span>
+
+                    <span>
+                        <strong>Shared</strong>
+                        <small>
+                            Visible to you and the connected
+                            support coordinator.
+                        </small>
+                    </span>
+                </label>
+
+                <label class="visibility-option" [class.visibility-option--selected]="
+                                form.controls.visibility.value ===
+                                'PRIVATE_TO_PARENT'
+                            ">
+                    <input type="radio" formControlName="visibility" value="PRIVATE_TO_PARENT" />
+
+                    <span class="radio-control"></span>
+
+                    <span>
+                        <strong>Private</strong>
+                        <small>
+                            Visible only to the parent.
+                        </small>
+                    </span>
+                </label>
+            </div>
+            } @else {
+            <div class="coordinator-visibility">
+                <span aria-hidden="true">✓</span>
+
+                <div>
+                    <strong>Shared with parent</strong>
+                    <p>
+                        Documents uploaded by a support
+                        coordinator are automatically visible
+                        to the parent.
+                    </p>
+                </div>
+            </div>
+            }
+        </section>
+
+        <div class="form-actions">
+            <button class="secondary-button" type="button" [disabled]="isSubmitting" (click)="cancel()">
+                Cancel
+            </button>
+
+            <button class="primary-button" type="submit" [disabled]="isSubmitting">
+                {{
+                isSubmitting
+                ? (
+                isEditMode
+                ? 'Saving...'
+                : 'Uploading...'
+                )
+                : (
+                isEditMode
+                ? 'Save changes'
+                : 'Upload document'
+                )
+                }}
+            </button>
+        </div>
+    </form>
+    }
+
+</section>

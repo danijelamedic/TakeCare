@@ -1,0 +1,369 @@
+<section class="therapy-details-page">
+    @if (isLoading) {
+    <div class="state-card">
+        <div class="spinner" aria-hidden="true"></div>
+        <p>Loading therapy details...</p>
+    </div>
+    } @else if (errorMessage && !therapy) {
+    <div class="state-card error-state">
+        <h2>Unable to load therapy</h2>
+        <p>{{ errorMessage }}</p>
+
+        <button class="secondary-button" type="button" (click)="goBack()">
+            Back to therapies
+        </button>
+    </div>
+    } @else if (therapy) {
+    <button class="back-button" type="button" (click)="goBack()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+        </svg>
+
+        <span>Back to therapies</span>
+    </button>
+
+    <header class="details-header">
+        <div class="header-main">
+            <!-- <div class="therapy-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                    <g transform="rotate(-45 12 12)">
+                        <rect x="7" y="3.5" width="10" height="17" rx="5" />
+                        <path d="M7 12h10" />
+                    </g>
+                </svg>
+            </div> -->
+
+            <div>
+                <div class="title-row">
+                    <h1>{{ therapy.name }}</h1>
+
+                    <span class="status-badge" [class.status-badge--active]="
+                                therapy.status === 'ACTIVE'
+                            " [class.status-badge--paused]="
+                                therapy.status === 'PAUSED'
+                            " [class.status-badge--completed]="
+                                therapy.status === 'COMPLETED'
+                            ">
+                        {{ getStatusLabel(therapy.status) }}
+                    </span>
+                </div>
+
+                <p>
+                    {{ therapy.description || 'No description provided.' }}
+                </p>
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <button class="secondary-button" type="button" (click)="openEditTherapy()">
+                Edit therapy
+            </button>
+
+            @if (
+            !isCoordinator &&
+            therapy.status === 'ACTIVE'
+            ) {
+            <button class="primary-button" type="button" (click)="openIntakeForm()">
+                Record intake
+            </button>
+            }
+        </div>
+    </header>
+
+    @if (successMessage) {
+    <div class="message message--success">
+        {{ successMessage }}
+    </div>
+    }
+
+    @if (errorMessage) {
+    <div class="message message--error">
+        {{ errorMessage }}
+    </div>
+    }
+
+    <div class="details-grid">
+        <div class="main-column">
+            <section class="content-card">
+                <div class="section-heading">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 6v6l4 2" />
+                            <circle cx="12" cy="12" r="9" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h2>Therapy overview</h2>
+                    </div>
+                </div>
+
+                <div class="information-grid">
+                    <div class="information-item">
+                        <span>Dosage</span>
+                        <strong>
+                            {{ therapy.dosage || 'Not specified' }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Frequency</span>
+                        <strong>
+                            {{ therapy.frequency || 'Not specified' }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>Start date</span>
+                        <strong>
+                            {{ therapy.startDate | date: 'dd MMM yyyy' }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item">
+                        <span>End date</span>
+                        <strong>
+                            {{ therapy.endDate ? (therapy.endDate | date: 'dd MMM yyyy') : 'Ongoing' }}
+                        </strong>
+                    </div>
+
+                    <div class="information-item full-width">
+                        <span>Prescribed by</span>
+                        <strong class="prescribed-by-value">
+                            <span>
+                                {{ therapy.prescribedByName || 'Not specified' }}
+                            </span>
+                        
+                            @if (
+                            therapy.prescribedByName &&
+                            therapy.prescribedByProfession
+                            ) {
+                            <span aria-hidden="true">·</span>
+                        
+                            <span>
+                                {{
+                                getProfessionLabel(
+                                therapy.prescribedByProfession
+                                )
+                                }}
+                            </span>
+                            }
+                        </strong>
+                    </div>
+                </div>
+
+                @if (therapy.instructions) {
+                <div class="text-section">
+                    <h3>Instructions</h3>
+                    <p>{{ therapy.instructions }}</p>
+                </div>
+                }
+
+                @if (therapy.notes) {
+                <div class="text-section">
+                    <h3>Additional notes</h3>
+                    <p>{{ therapy.notes }}</p>
+                </div>
+                }
+            </section>
+
+            <section class="content-card">
+                <div class="section-heading">
+                    <div class="section-icon">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <rect x="3" y="5" width="18" height="16" rx="2" />
+                            <path d="M16 3v4M8 3v4M3 10h18" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <h2>Schedule</h2>
+                    </div>
+                </div>
+
+                @if (therapy.schedules.length > 0) {
+                <div class="schedule-list">
+                    @for (
+                    schedule of therapy.schedules;
+                    track schedule.id
+                    ) {
+                    <article class="schedule-item">
+                        <div class="schedule-time">
+                            {{ formatTime( schedule.time ) }}
+                        </div>
+
+                        <div class="schedule-content">
+                            <h3>
+                                {{ formatScheduleDays( schedule.daysOfWeek ) }}
+                            </h3>
+
+                            @if (schedule.frequencyDescription) {
+                            <p>
+                                {{ schedule.frequencyDescription }}
+                            </p>
+                            }
+
+                            @if (schedule.instructions) {
+                            <p class="schedule-note">
+                                {{ schedule.instructions }}
+                            </p>
+                            }
+
+                            <div class="schedule-period">
+                                <span>
+                                    {{ schedule.startDate | date: 'dd MMM yyyy' }}
+                                </span>
+
+                                <span aria-hidden="true">–</span>
+
+                                <span>
+                                    {{ schedule.endDate ? (schedule.endDate | date: 'dd MMM yyyy') : 'Ongoing' }}
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+                    }
+                </div>
+                } @else {
+                <div class="empty-section">
+                    No schedule has been added for this therapy.
+                </div>
+                }
+            </section>
+
+            <section class="content-card">
+                <div class="section-heading intake-heading">
+                    <div class="section-heading-main">
+                        <div class="section-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M9 11l3 3L22 4" />
+                                <path d="M21 12a9 9 0 1 1-5.3-8.2" />
+                            </svg>
+                        </div>
+
+                        <div>
+                            <h2>Intake history</h2>
+                        </div>
+                    </div>
+
+                    @if (
+                    !isCoordinator &&
+                    therapy.status === 'ACTIVE'
+                    ) {
+                    <button class="text-button" type="button" (click)="openIntakeForm()">
+                        + Record intake
+                    </button>
+                    }
+                </div>
+
+                @if (intakes.length > 0) {
+                <div class="intake-list">
+                    @for (
+                    intake of intakes;
+                    track intake.id
+                    ) {
+                    <article class="intake-item">
+                        <div class="intake-status-icon" [class.intake-status-icon--taken]="
+                                            intake.status === 'TAKEN'
+                                        " [class.intake-status-icon--skipped]="
+                                            intake.status === 'SKIPPED'
+                                        ">
+                            @if (intake.status === 'TAKEN') {
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="m5 12 4 4L19 6" />
+                            </svg>
+                            } @else {
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M6 6l12 12M18 6 6 18" />
+                            </svg>
+                            }
+                        </div>
+
+                        <div class="intake-content">
+                            <div class="intake-title-row">
+                                <h3>
+                                    {{ intake.status === 'TAKEN' ? 'Dose taken' : 'Dose skipped' }}
+                                </h3>
+
+                                <span>
+                                    {{ intake.scheduledAt | date: 'dd MMM yyyy, HH:mm' }}
+                                </span>
+                            </div>
+
+                            @if ( intake.status === 'TAKEN' && intake.takenAt ) {
+                            <p>
+                                Taken at
+                                {{ intake.takenAt | date: 'dd MMM yyyy, HH:mm'  }}
+                            </p>
+                            }
+
+                            @if (intake.notes) {
+                            <p>{{ intake.notes }}</p>
+                            }
+                        </div>
+                    </article>
+                    }
+                </div>
+                } @else {
+                <div class="empty-section">
+                    No intake records are available yet.
+                </div>
+                }
+            </section>
+        </div>
+
+        <aside class="side-column">
+            <section class="content-card status-card">
+                <h2>Therapy status</h2>
+                <p>
+                    Update the overall state of this treatment plan.
+                </p>
+
+                <div class="status-actions">
+                    @if (therapy.status !== 'ACTIVE') {
+                    <button class="status-button status-button--active" type="button" [disabled]="isUpdatingStatus"
+                        (click)="updateStatus('ACTIVE')">
+                        Reactivate therapy
+                    </button>
+                    }
+
+                    @if (therapy.status === 'ACTIVE') {
+                    <button class="status-button status-button--pause" type="button" [disabled]="isUpdatingStatus"
+                        (click)="updateStatus('PAUSED')">
+                        Pause therapy
+                    </button>
+                    }
+
+                    @if (therapy.status !== 'COMPLETED') {
+                    <button class="status-button" type="button" [disabled]="isUpdatingStatus"
+                        (click)="updateStatus('COMPLETED')">
+                        Mark as completed
+                    </button>
+                    }
+                </div>
+            </section>
+
+            <section class="content-card metadata-card">
+                <h2>Record information</h2>
+
+                <dl>
+                    <div>
+                        <dt>Created</dt>
+                        <dd>
+                            {{  therapy.createdAt | date: 'dd MMM yyyy, HH:mm' }}
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt>Last updated</dt>
+                        <dd>
+                            {{  therapy.updatedAt | date: 'dd MMM yyyy, HH:mm' }}
+                        </dd>
+                    </div>
+                </dl>
+            </section>
+        </aside>
+    </div>
+    }
+</section>

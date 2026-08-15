@@ -4,9 +4,8 @@
 
 .caregiver-profile-page {
     width: 100%;
-    max-width: 1160px;
+    max-width: 1040px;
     margin: 0 auto;
-    padding: 60px 36px;
 }
 
 .profile-header {
@@ -126,10 +125,6 @@
 }
 
 @media (max-width: 700px) {
-    .caregiver-profile-page {
-        padding: 36px 20px;
-    }
-
     .profile-header {
         align-items: flex-start;
         flex-direction: column;

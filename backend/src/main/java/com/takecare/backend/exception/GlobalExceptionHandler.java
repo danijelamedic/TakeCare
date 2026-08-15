@@ -6,7 +6,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -94,5 +96,168 @@ public class GlobalExceptionHandler {
                         "message",
                         exception.getMessage()
                 ));
+    }
+
+    @ExceptionHandler(TherapyNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleTherapyNotFound(
+            TherapyNotFoundException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(TherapyIntakeNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleTherapyIntakeNotFound(
+            TherapyIntakeNotFoundException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(ProfessionalContactNotFoundException.class)
+    public ResponseEntity<Map<String, Object>>
+    handleProfessionalContactNotFound(
+            ProfessionalContactNotFoundException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(TherapyAccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleTherapyAccessDenied(
+            TherapyAccessDeniedException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.FORBIDDEN,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(InvalidTherapyDataException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidTherapyData(
+            InvalidTherapyDataException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(TherapyIntakeAlreadyRecordedException.class)
+    public ResponseEntity<Map<String, Object>>
+    handleTherapyIntakeAlreadyRecorded(
+            TherapyIntakeAlreadyRecordedException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(ProfessionalContactAccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>>
+    handleProfessionalContactAccessDenied(
+            ProfessionalContactAccessDeniedException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.FORBIDDEN,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(DocumentNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleDocumentNotFound(
+            DocumentNotFoundException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(DocumentAccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleDocumentAccessDenied(
+            DocumentAccessDeniedException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.FORBIDDEN,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(InvalidDocumentFileException.class)
+    public ResponseEntity<Map<String, Object>> handleInvalidDocumentFile(
+            InvalidDocumentFileException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(DocumentStorageException.class)
+    public ResponseEntity<Map<String, Object>> handleDocumentStorage(
+            DocumentStorageException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                "The document could not be processed."
+        );
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<Map<String, Object>> handleMaxUploadSizeExceeded(
+            MaxUploadSizeExceededException exception
+    ) {
+        return buildErrorResponse(
+                HttpStatus.PAYLOAD_TOO_LARGE,
+                "The selected file exceeds the maximum allowed size of 10 MB."
+        );
+    }
+
+    private ResponseEntity<Map<String, Object>> buildErrorResponse(
+            HttpStatus status,
+            String message
+    ) {
+        Map<String, Object> body = new LinkedHashMap<>();
+
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("message", message);
+
+        return ResponseEntity
+                .status(status)
+                .body(body);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>>
+    handleIllegalArgument(IllegalArgumentException exception) {
+        return buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalStateException(
+            IllegalStateException exception
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status", HttpStatus.BAD_REQUEST.value());
+        response.put("error", "Bad Request");
+        response.put("message", exception.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(response);
     }
 }

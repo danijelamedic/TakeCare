@@ -1,9 +1,5 @@
 import { Component } from '@angular/core';
-import {
-    Router,
-    RouterLink,
-    RouterOutlet
-} from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 
 import { AuthService } from '../../core/services/auth.service';
 import { UserResponse } from '../../core/models/auth.models';
@@ -14,6 +10,7 @@ import { CoordinatorSidebar } from '../../shared/components/coordinator-sidebar/
     standalone: true,
     imports: [
         RouterOutlet,
+        RouterLink,
         CoordinatorSidebar
     ],
     templateUrl: './coordinator-layout.html',

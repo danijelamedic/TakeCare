@@ -12,6 +12,14 @@ import { CoordinatorHome } from './features/coordinator-home/coordinator-home';
 import { CoordinatorLayout } from './layouts/coordinator-layout/coordinator-layout';
 import { SupportCoordinator } from './features/support-coordinator/support-coordinator';
 import { AssignedPatient } from './features/assigned-patient/assigned-patient';
+import { Diary } from './features/diary/diary';
+import { TherapyList } from './features/therapy/therapy-list/therapy-list';
+import { ProfessionalContactList } from './features/professional-contact/professional-contact-list/professional-contact-list';
+import { ProfessionalContactDetails } from './features/professional-contact/professional-contact-details/professional-contact-details';
+import {AppointmentRequestList} from './features/appointment-request/appointment-request-list/appointment-request-list';
+import { Calendar } from './features/calendar/calendar';
+import { DocumentList } from './features/document/document-list/document-list';
+import { DocumentForm } from './features/document/document-form/document-form';
 
 export const routes: Routes = [
     {
@@ -76,6 +84,97 @@ export const routes: Routes = [
                 component: SupportCoordinator,
                 title: 'Support coordinator | TakeCare'
             },
+            {
+                path: 'diary',
+                component: Diary
+            },
+            {
+                path: 'therapies',
+                component: TherapyList,
+                title: 'Therapies | TakeCare'
+            },
+            {
+                path: 'therapies/create',
+                loadComponent: () =>
+                    import(
+                        './features/therapy/therapy-form/therapy-form'
+                    ).then(component => component.TherapyForm),
+                title: 'Add therapy | TakeCare'
+            },
+            {
+                path: 'therapies/:id/edit',
+                loadComponent: () =>
+                    import(
+                        './features/therapy/therapy-form/therapy-form'
+                    ).then(component => component.TherapyForm),
+                title: 'Edit therapy | TakeCare'
+            },
+            {
+                path: 'therapies/:id',
+                loadComponent: () =>
+                    import('./features/therapy/therapy-details/therapy-details').then(component => component.TherapyDetails),
+                title: 'Therapy details | TakeCare'
+            },
+            {
+                path: 'therapies/:id/intakes/create',
+                loadComponent: () =>
+                    import(
+                        './features/therapy/therapy-intake-form/therapy-intake-form'
+                    ).then(component => component.TherapyIntakeForm),
+                title: 'Record intake | TakeCare'
+            },
+            {
+                path: 'professionals',
+                component: ProfessionalContactList,
+                title: 'Professionals | TakeCare'
+            },
+            {
+                path: 'professionals/:id',
+                component: ProfessionalContactDetails,
+                title: 'Professional details | TakeCare'
+            },
+            {
+                path: 'appointments',
+                component: AppointmentRequestList,
+                title: 'Appointment requests | TakeCare'
+            },
+            {
+                path: 'appointments/create',
+                loadComponent: () =>
+                    import(
+                        './features/appointment-request/appointment-request-form/appointment-request-form'
+                    ).then(
+                        component =>
+                            component.AppointmentRequestForm
+                    ),
+                title: 'New appointment request | TakeCare'
+            },
+            {
+                path: 'calendar',
+                component: Calendar,
+                title: 'Calendar | TakeCare'
+            },
+            {
+                path: 'documents',
+                component: DocumentList,
+                title: 'Documents | TakeCare'
+            },
+            {
+                path: 'documents/upload',
+                loadComponent: () =>
+                    import(
+                        './features/document/document-form/document-form'
+                    ).then(component => component.DocumentForm),
+                title: 'Upload document | TakeCare'
+            },
+            {
+                path: 'documents/:id/edit',
+                loadComponent: () =>
+                    import(
+                        './features/document/document-form/document-form'
+                    ).then(component => component.DocumentForm),
+                title: 'Edit document | TakeCare'
+            }
         ]
     },
     {
@@ -97,6 +196,78 @@ export const routes: Routes = [
                 path: 'profile',
                 component: CaregiverProfile,
                 title: 'My profile | TakeCare'
+            },
+            {
+                path: 'diary',
+                component: Diary
+            },
+            {
+                path: 'therapies',
+                component: TherapyList,
+                title: 'Therapies | TakeCare'
+            },
+            {
+                path: 'therapies/create',
+                loadComponent: () =>
+                    import(
+                        './features/therapy/therapy-form/therapy-form'
+                    ).then(component => component.TherapyForm),
+                title: 'Add therapy | TakeCare'
+            },
+            {
+                path: 'therapies/:id/edit',
+                loadComponent: () =>
+                    import(
+                        './features/therapy/therapy-form/therapy-form'
+                    ).then(component => component.TherapyForm),
+                title: 'Edit therapy | TakeCare'
+            },
+            {
+                path: 'therapies/:id',
+                loadComponent: () =>
+                    import('./features/therapy/therapy-details/therapy-details').then(component => component.TherapyDetails),
+                title: 'Therapy details | TakeCare'
+            },
+            {
+                path: 'professionals',
+                component: ProfessionalContactList,
+                title: 'Professionals | TakeCare'
+            },
+            {
+                path: 'professionals/:id',
+                component: ProfessionalContactDetails,
+                title: 'Professional details | TakeCare'
+            },
+            {
+                path: 'appointments',
+                component: AppointmentRequestList,
+                title: 'Appointment requests | TakeCare'
+            },
+            {
+                path: 'calendar',
+                component: Calendar,
+                title: 'Calendar | TakeCare'
+            },
+            {
+                path: 'documents',
+                component: DocumentList,
+                title: 'Documents | TakeCare'
+            },
+            {
+                path: 'documents/upload',
+                loadComponent: () =>
+                    import(
+                        './features/document/document-form/document-form'
+                    ).then(component => component.DocumentForm),
+                title: 'Upload document | TakeCare'
+            },
+            {
+                path: 'documents/:id/edit',
+                loadComponent: () =>
+                    import(
+                        './features/document/document-form/document-form'
+                    ).then(component => component.DocumentForm),
+                title: 'Edit document | TakeCare'
             }
         ]
     },

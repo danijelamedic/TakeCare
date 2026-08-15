@@ -3,8 +3,8 @@
 }
 
 .care-profile-page {
-    padding: 2rem;
-    max-width: 1400px;
+    width: 100%;
+    max-width: 1040px;
     margin: 0 auto;
 }
 
@@ -204,7 +204,6 @@
 
 .info-panel {
     padding: 1.15rem;
-    border: 1px solid rgba(49, 119, 139, 0.1);
     border-radius: 1rem;
     background: #f9fbfc;
 
@@ -276,10 +275,6 @@
 }
 
 @media (max-width: 700px) {
-    .care-profile-page {
-        padding: 1rem;
-    }
-
     .profile-header {
         align-items: flex-start;
         flex-direction: column;

@@ -1,0 +1,394 @@
+<section class="professional-profile-page">
+
+    <button class="back-button" type="button" (click)="goBack()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+        </svg>
+    
+        <span>Back to professionals list</span>
+    </button>
+
+    @if (isLoading) {
+    <div class="state-card">
+        <div class="spinner"></div>
+        <p>Loading professional profile...</p>
+    </div>
+    } @else if (errorMessage || !professional) {
+    <div class="state-card state-card--error">
+        <h2>Professional unavailable</h2>
+
+        <p>
+            {{
+            errorMessage ||
+            'The professional profile could not be loaded.'
+            }}
+        </p>
+
+        <button class="primary-button" type="button" (click)="goBack()">
+            Return to professionals
+        </button>
+    </div>
+    } @else {
+    <header [class]="
+            'profile-header ' +
+            getProfessionalClass(
+                professional.professionalType
+            )
+        ">
+        <div class="profile-identity">
+            <div class="profile-avatar">
+                {{ professionalInitials }}
+            </div>
+
+            <div>
+                <p class="eyebrow">Professional profile</p>
+
+                <h1>{{ professional.fullName }}</h1>
+
+                <p class="role-label">
+                    {{
+                    getProfessionalTypeLabel(
+                    professional.professionalType
+                    )
+                    }}
+
+                    @if (professional.specialization) {
+                    <span aria-hidden="true"> · </span>
+                    {{ professional.specialization }}
+                    }
+                </p>
+            </div>
+        </div>
+<!-- 
+        <span class="connected-badge">
+            Connected
+        </span> -->
+    </header>
+
+    @if (
+    nextAppointment &&
+    nextAppointmentDateTime
+    ) {
+    <aside class="next-appointment-card" aria-label="Next confirmed appointment">
+        <div class="appointment-calendar-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+                <rect x="4" y="5.5" width="16" height="14" rx="2" />
+                <path d="M8 3.5v4M16 3.5v4M4 9.5h16" />
+                <path d="M8 13h3M8 16h5" />
+            </svg>
+        </div>
+    
+        <div class="appointment-summary">
+            <p class="appointment-eyebrow">
+                Next appointment
+            </p>
+    
+            <h2>
+                <button type="button" class="appointment-date-link" title="Open this appointment in the calendar"
+                    (click)="openAppointmentInCalendar()">
+                    {{
+                    nextAppointmentDateTime
+                    | date:'EEEE, dd MMMM yyyy'
+                    }}
+                </button>
+            </h2>
+    
+            <p class="appointment-time">
+                At
+                {{
+                nextAppointmentDateTime
+                | date:'HH:mm'
+                }}
+            </p>
+        </div>
+    
+        <span class="confirmed-badge">
+            Confirmed
+        </span>
+    </aside>
+    }
+
+    @if (
+    !isCoordinator &&
+    !nextAppointment &&
+    hasOpenAppointmentRequest
+    ) {
+    <aside class="appointment-request-notice">
+        <div class="appointment-calendar-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="8" />
+                <path d="M12 8v4l3 2" />
+            </svg>
+        </div>
+    
+        <div class="appointment-summary">
+            <p class="appointment-eyebrow">
+                Appointment request
+            </p>
+    
+            <h2>Request in progress</h2>
+    
+            <p class="appointment-time">
+                This appointment request is waiting for
+                a response.
+            </p>
+        </div>
+    
+        <span class="pending-badge">
+            Pending
+        </span>
+    </aside>
+    }
+    
+    @if (
+    !isCoordinator &&
+    !nextAppointment &&
+    !hasOpenAppointmentRequest
+    ) {
+    <aside class="request-appointment-card">
+        <div class="appointment-calendar-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+                <rect x="4" y="5.5" width="16" height="14" rx="2" />
+                <path d="M8 3.5v4M16 3.5v4M4 9.5h16" />
+                <path d="M12 12v5M9.5 14.5h5" />
+            </svg>
+        </div>
+    
+        <div class="appointment-summary">
+            <p class="appointment-eyebrow">
+                Appointments
+            </p>
+    
+            <h2>No upcoming appointment</h2>
+    
+            <!-- <p class="appointment-time">
+                Send an appointment request to this
+                professional.
+            </p> -->
+        </div>
+    
+        <button class="request-appointment-button" type="button" (click)="requestAppointment()">
+            Request an appointment
+        </button>
+    </aside>
+    }
+
+    <article class="profile-card">
+        <div class="card-heading">
+            <h2>Contact information</h2>
+
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Phone</span>
+
+                @if (professional.phoneNumber) {
+                <a [href]="'tel:' + professional.phoneNumber">
+                    {{ professional.phoneNumber }}
+                </a>
+                } @else {
+                <strong>Not provided</strong>
+                }
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Email</span>
+
+                @if (professional.email) {
+                <a [href]="'mailto:' + professional.email">
+                    {{ professional.email }}
+                </a>
+                } @else {
+                <strong>Not provided</strong>
+                }
+            </div>
+
+            <div class="detail-item detail-item--full">
+                <span class="detail-label">Address</span>
+
+                <strong>
+                    {{ professional.address || 'Not provided' }}
+                </strong>
+            </div>
+        </div>
+    </article>
+
+    <article class="profile-card">
+        <div class="card-heading">
+            <h2>Professional information</h2>
+
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-item">
+                <span class="detail-label">Profession</span>
+
+                <strong>
+                    {{
+                    getProfessionalTypeLabel(
+                    professional.professionalType
+                    )
+                    }}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Specialization</span>
+
+                <strong>
+                    {{
+                    professional.specialization ||
+                    'Not provided'
+                    }}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Institution</span>
+
+                <strong>
+                    {{
+                    professional.institutionName ||
+                    'Not provided'
+                    }}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Working hours</span>
+
+                <strong>
+                    {{
+                    professional.workingHours ||
+                    'Not provided'
+                    }}
+                </strong>
+            </div>
+        </div>
+    </article>
+
+    <article class="profile-card issued-documents-card">
+        <div class="documents-heading">
+            <div class="card-heading">
+                <h2>
+                
+                    Documents issued by
+                    {{ professional.firstName }} {{ professional.lastName }}.
+                </h2>
+            </div>
+    
+            @if (!isLoadingDocuments) {
+            <span class="documents-count">
+                {{ documents.length }}
+                {{ documents.length === 1 ? 'document' : 'documents' }}
+            </span>
+            }
+        </div>
+    
+        @if (isLoadingDocuments) {
+        <div class="documents-state">
+            <span class="spinner"></span>
+            <span>Loading documents...</span>
+        </div>
+        } @else if (documentsErrorMessage) {
+        <div class="documents-state documents-state--error">
+            <span>{{ documentsErrorMessage }}</span>
+    
+            <button type="button" (click)="loadIssuedDocuments()">
+                Try again
+            </button>
+        </div>
+        } @else if (documents.length === 0) {
+        <div class="documents-empty">
+            <div class="documents-empty__icon">🗐</div>
+    
+            <div>
+                <strong>No issued documents</strong>
+                <p>
+                    There are currently no documents associated with this professional.
+                </p>
+            </div>
+        </div>
+        } @else {
+        <div class="issued-documents-list">
+            @for (document of documents; track document.id) {
+            <article class="issued-document">
+                <div class="issued-document__icon">🗐</div>
+    
+                <div class="issued-document__content">
+                    <div class="issued-document__heading">
+                        <h3>{{ document.title }}</h3>
+    
+                        <span class="document-type">
+                            {{ getDocumentTypeLabel(document.documentType) }}
+                        </span>
+                    </div>
+    
+                    <p class="issued-document__file">
+                        {{ document.originalFileName }}
+                    </p>
+    
+                    <div class="issued-document__metadata">
+                        <span>{{ formatFileSize(document.fileSize) }}</span>
+    
+                        @if (document.documentDate) {
+                        <span>
+                            Document date:
+                            {{ document.documentDate | date: 'MMM d, y' }}
+                        </span>
+                        }
+    
+                        <span>
+                            Uploaded {{ document.uploadedAt | date: 'MMM d, y' }}
+                        </span>
+                    </div>
+                </div>
+    
+                <div class="issued-document__actions">
+                    <button type="button" class="document-action document-action--primary"
+                        [disabled]="viewingDocumentId === document.id" (click)="viewDocument(document)">
+                        {{
+                        viewingDocumentId === document.id
+                        ? 'Opening...'
+                        : 'View'
+                        }}
+                    </button>
+    
+                    <button type="button" class="document-action" [disabled]="downloadingDocumentId === document.id"
+                        (click)="downloadDocument(document)">
+                        {{
+                        downloadingDocumentId === document.id
+                        ? 'Downloading...'
+                        : 'Download'
+                        }}
+                    </button>
+                </div>
+            </article>
+            }
+        </div>
+        }
+    </article>
+
+    @if (professional.notes) {
+    <article class="profile-card">
+        <div class="card-heading">
+            <h2>Additional notes</h2>
+
+        </div>
+
+        <div class="notes-content">
+            {{ professional.notes }}
+        </div>
+    </article>
+    }
+<!-- 
+    <div class="page-actions">
+        <button class="secondary-button" type="button" (click)="goBack()">
+            Back to professionals
+        </button>
+    </div> -->
+    }
+
+</section>

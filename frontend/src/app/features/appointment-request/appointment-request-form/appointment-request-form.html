@@ -1,0 +1,233 @@
+<section class="request-form-page">
+
+    <button class="back-button" type="button" (click)="cancel()">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+        </svg>
+
+        <span>Back to therapies</span>
+    </button>
+
+    <header class="form-header">
+        <!-- <div class="header-icon" aria-hidden="true">
+            ◷
+        </div> -->
+
+        <div>
+            <h1>New appointment request</h1>
+
+            <p>
+                Select a professional and suggest a preferred
+                date and time for the appointment.
+            </p>
+        </div>
+    </header>
+
+    @if (errorMessage) {
+    <div class="message error-message">
+        <span aria-hidden="true">!</span>
+        {{ errorMessage }}
+    </div>
+    }
+
+    @if (isLoading) {
+    <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading appointment information...</p>
+    </div>
+    } @else if (
+    !errorMessage &&
+    professionals.length === 0
+    ) {
+    <div class="empty-state">
+        <div class="empty-icon" aria-hidden="true">
+            ⚕
+        </div>
+
+        <h2>No connected professionals</h2>
+
+        <p>
+            A professional must be connected to the care
+            profile before you can request an appointment.
+        </p>
+
+        <button class="secondary-button" type="button" (click)="cancel()">
+            Return to requests
+        </button>
+    </div>
+    } @else if (professionals.length > 0) {
+    <form class="request-form" [formGroup]="requestForm" (ngSubmit)="submit()">
+        <section class="form-card">
+            <div class="form-section-heading">
+                <span class="section-number">1</span>
+
+                <div>
+                    <h2>Select a professional</h2>
+
+                    <p>
+                        Only professionals connected to the
+                        care profile are available.
+                    </p>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <!-- <label for="professionalContactId">
+                    Professional
+                    <span aria-hidden="true">*</span>
+                </label> -->
+
+                <select id="professionalContactId" formControlName="professionalContactId" [class.invalid]="
+                            professionalContactIdControl.touched &&
+                            professionalContactIdControl.invalid
+                        ">
+                    <option [ngValue]="null">
+                        Select a professional
+                    </option>
+
+                    @for (
+                    professional of professionals;
+                    track professional.id
+                    ) {
+                    <option [ngValue]="professional.id">
+                        {{ professional.fullName }}
+                        -
+                        {{
+                        getProfessionLabel(
+                        professional.professionalType
+                        )
+                        }}
+                    </option>
+                    }
+                </select>
+
+                @if (
+                professionalContactIdControl.touched &&
+                professionalContactIdControl.hasError(
+                'required'
+                )
+                ) {
+                <p class="field-error">
+                    Please select a professional.
+                </p>
+                }
+            </div>
+        </section>
+
+        <section class="form-card">
+            <div class="form-section-heading">
+                <span class="section-number">2</span>
+
+                <div>
+                    <h2>Preferred time</h2>
+
+                    <p>
+                        The coordinator may approve this time
+                        or suggest a different one.
+                    </p>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <!-- <label for="requestedDateTime">
+                    Preferred date and time
+                    <span aria-hidden="true">*</span>
+                </label> -->
+
+                <input id="requestedDateTime" type="datetime-local" formControlName="requestedDateTime"
+                    [min]="minimumDateTime" [class.invalid]="
+                            requestedDateTimeControl.touched &&
+                            requestedDateTimeControl.invalid
+                        " />
+
+                @if (
+                requestedDateTimeControl.touched &&
+                requestedDateTimeControl.hasError(
+                'required'
+                )
+                ) {
+                <p class="field-error">
+                    Please select a preferred date and time.
+                </p>
+                } @else if (
+                requestedDateTimeControl.touched &&
+                requestedDateTimeControl.hasError(
+                'notFuture'
+                )
+                ) {
+                <p class="field-error">
+                    The preferred date and time must be
+                    in the future.
+                </p>
+                }
+            </div>
+        </section>
+
+        <section class="form-card">
+            <div class="form-section-heading">
+                <span class="section-number">3</span>
+
+                <div>
+                    <h2>Appointment details</h2>
+
+                    <p>
+                        Briefly explain the reason for this
+                        appointment request.
+                    </p>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <!-- <label for="reason">
+                    Reason for appointment
+                    <span aria-hidden="true">*</span>
+                </label> -->
+
+                <textarea id="reason" rows="6" maxlength="1000" formControlName="reason"
+                    placeholder="For example: Regular check-up and therapy progress evaluation" [class.invalid]="
+                            reasonControl.touched &&
+                            reasonControl.invalid
+                        "></textarea>
+
+                <div class="field-footer">
+                    <div>
+                        @if (
+                        reasonControl.touched &&
+                        reasonControl.hasError(
+                        'required'
+                        )
+                        ) {
+                        <p class="field-error">
+                            Please enter the reason for
+                            the appointment.
+                        </p>
+                        }
+                    </div>
+
+                    <span class="character-count">
+                        {{
+                        reasonControl.value?.length || 0
+                        }}/1000
+                    </span>
+                </div>
+            </div>
+        </section>
+
+        <div class="form-actions">
+            <button class="secondary-button" type="button" [disabled]="isSubmitting" (click)="cancel()">
+                Cancel
+            </button>
+
+            <button class="primary-button" type="submit" [disabled]="isSubmitting">
+                {{
+                isSubmitting
+                ? 'Sending request...'
+                : 'Send appointment request'
+                }}
+            </button>
+        </div>
+    </form>
+    }
+
+</section>

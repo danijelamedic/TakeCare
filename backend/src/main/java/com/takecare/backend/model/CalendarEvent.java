@@ -67,6 +67,16 @@ public class CalendarEvent {
     )
     private ProfessionalContact professionalContact;
 
+    @OneToOne
+    @JoinColumn(
+            name = "appointment_request_id",
+            unique = true,
+            foreignKey = @ForeignKey(
+                    name = "fk_calendar_event_appointment_request"
+            )
+    )
+    private AppointmentRequest appointmentRequest;
+
     @Column(nullable = false)
     private boolean reminderEnabled = false;
 
@@ -86,7 +96,7 @@ public class CalendarEvent {
         updatedAt = now;
 
         if (status == null) {
-            status = CalendarEventStatus.SCHEDULED;
+            status = CalendarEventStatus.PLANNED;
         }
     }
 

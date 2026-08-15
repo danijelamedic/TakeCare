@@ -1,0 +1,288 @@
+<section class="documents-page">
+
+    <header class="documents-header">
+        <div>
+            <h1>Documents</h1>
+
+            <p>
+                Keep reports, assessments and other important
+                documents organised in one place.
+            </p>
+        </div>
+
+        <button class="primary-button" type="button" [disabled]="patientId === null" (click)="openUploadForm()">
+            <span class="button-icon" aria-hidden="true">+</span>
+            <span>Upload document</span>
+        </button>
+    </header>
+
+    @if (successMessage) {
+    <div class="message success-message">
+        <span aria-hidden="true">✓</span>
+        {{ successMessage }}
+    </div>
+    }
+
+    @if (errorMessage) {
+    <div class="message error-message">
+        <span aria-hidden="true">!</span>
+        {{ errorMessage }}
+    </div>
+    }
+
+    <section class="documents-toolbar">
+        <label class="category-filter">
+            <span>Document type</span>
+    
+            <select [value]="selectedFilter" [disabled]="isLoading" (change)="selectFilter($event)">
+                @for (filter of filters; track filter.value) {
+                <option [value]="filter.value">
+                    {{ filter.label }}
+                </option>
+                }
+            </select>
+        </label>
+    
+        <span class="documents-count">
+            {{ filteredDocuments.length }}
+            {{
+            filteredDocuments.length === 1
+            ? 'document'
+            : 'documents'
+            }}
+        </span>
+    </section>
+
+    @if (isLoading) {
+    <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading documents...</p>
+    </div>
+    } @else if (
+    !errorMessage &&
+    filteredDocuments.length === 0
+    ) {
+    <div class="empty-state">
+
+        <div class="empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+                <path d="M6 3.5h8l4 4v13H6z" />
+                <path d="M14 3.5v4h4" />
+                <path d="M9 12h6M9 15.5h6" />
+            </svg>
+        </div>
+
+        <h2>
+            {{
+            selectedFilter === 'ALL'
+            ? 'No documents yet'
+            : 'No documents in this category'
+            }}
+        </h2>
+
+        <p>
+            @if (selectedFilter === 'ALL') {
+            Upload the first document to start
+            organising important records.
+            } @else {
+            Try selecting another category or view
+            all documents.
+            }
+        </p>
+
+        @if (
+        selectedFilter === 'ALL' &&
+        patientId !== null
+        ) {
+        <button class="primary-button" type="button" (click)="openUploadForm()">
+            <span class="button-icon" aria-hidden="true">
+                +
+            </span>
+            <span>Upload first document</span>
+        </button>
+        }
+    </div>
+    } @else if (filteredDocuments.length > 0) {
+    <div class="documents-list">
+
+        @for (
+        document of filteredDocuments;
+        track trackDocumentById($index, document)
+        ) {
+        <article class="document-card">
+
+            <div class="card-main">
+                <div class="document-icon" [class.document-icon--image]="
+                                document.contentType.startsWith(
+                                    'image/'
+                                )
+                            " aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 3.5h8l4 4v13H6z" />
+                        <path d="M14 3.5v4h4" />
+                        <path d="M9 12h6M9 15.5h6" />
+                    </svg>
+                </div>
+
+                <div class="document-content">
+                    <div class="document-title-row">
+                        <h2>{{ document.title }}</h2>
+
+                        <span class="type-badge">
+                            {{
+                            getDocumentTypeLabel(
+                            document.documentType
+                            )
+                            }}
+                        </span>
+
+                        @if (
+                        document.visibility ===
+                        'PRIVATE_TO_PARENT'
+                        ) {
+                        <span class="visibility-badge visibility-badge--private">
+                            Private
+                        </span>
+                        } @else {
+                        <span class="visibility-badge visibility-badge--shared">
+                            Shared
+                        </span>
+                        }
+                    </div>
+
+                    <div class="document-summary">
+                        <span class="file-name">
+                            {{ document.originalFileName }}
+                        </span>
+                    
+                        <span class="summary-separator" aria-hidden="true">
+                            ·
+                        </span>
+                    
+                        <span>
+                            {{ getFileTypeLabel(document) }}
+                        </span>
+                    
+                        <span class="summary-separator" aria-hidden="true">
+                            ·
+                        </span>
+                    
+                        <span>
+                            {{ formatFileSize(document.fileSize) }}
+                        </span>
+                    
+                        @if (document.documentDate) {
+                        <span class="summary-separator" aria-hidden="true">
+                            ·
+                        </span>
+                    
+                        <span>
+                            {{
+                            document.documentDate
+                            | date: 'MMM d, y'
+                            }}
+                        </span>
+                        }
+                    </div>
+                    
+                    <div class="upload-info">
+                        Uploaded by {{ document.uploadedByName }}
+                        ·
+                        {{ document.uploadedAt | date: 'MMM d, y' }}
+                    </div>
+
+                    @if (document.issuedByName) {
+                    <div class="issued-by">
+                        Issued by
+                        <strong>{{ document.issuedByName }}</strong>
+                    </div>
+                    }
+                    
+                    @if (document.description) {
+                    <p class="description" [title]="document.description">
+                        {{ document.description }}
+                    </p>
+                    }
+
+                    @if (
+                    pendingDeleteDocumentId ===
+                    document.id
+                    ) {
+                    <div class="delete-confirmation">
+                        <p>
+                            Delete this document permanently?
+                        </p>
+
+                        <div class="confirmation-actions">
+                            <button class="danger-button" type="button" [disabled]="
+                                                deletingDocumentId !==
+                                                null
+                                            " (click)="
+                                                confirmDelete(document)
+                                            ">
+                                {{
+                                deletingDocumentId ===
+                                document.id
+                                ? 'Deleting...'
+                                : 'Delete'
+                                }}
+                            </button>
+
+                            <button class="text-button" type="button" [disabled]="
+                                                deletingDocumentId !==
+                                                null
+                                            " (click)="cancelDelete()">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="view-button" type="button" [disabled]="viewingDocumentId !== null" (click)="viewDocument(document)">
+                    {{
+                    viewingDocumentId === document.id
+                    ? 'Opening...'
+                    : 'View document'
+                    }}
+                </button>
+            
+                <details class="action-menu">
+                    <summary aria-label="More document actions">
+                        <span aria-hidden="true">•••</span>
+                    </summary>
+            
+                    <div class="action-menu-panel">
+                        <button type="button" [disabled]="
+                                downloadingDocumentId !== null
+                            " (click)="downloadDocument(document)">
+                            {{
+                            downloadingDocumentId === document.id
+                            ? 'Downloading...'
+                            : 'Download'
+                            }}
+                        </button>
+            
+                        @if (canManageDocument(document)) {
+                        <button type="button" (click)="openEditForm(document)">
+                            Edit information
+                        </button>
+            
+                        <button class="menu-delete-button" type="button" [disabled]="
+                                    deletingDocumentId !== null
+                                " (click)="requestDelete(document)">
+                            Delete
+                        </button>
+                        }
+                    </div>
+                </details>
+            </div>
+
+        </article>
+        }
+    </div>
+    }
+
+</section>

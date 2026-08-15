@@ -21,6 +21,8 @@ public class AppointmentRequest {
     @Column(nullable = false)
     private LocalDateTime requestedDateTime;
 
+    private LocalDateTime proposedDateTime;
+
     @Column(columnDefinition = "TEXT")
     private String reason;
 
@@ -29,7 +31,7 @@ public class AppointmentRequest {
     private AppointmentRequestStatus status;
 
     @Column(columnDefinition = "TEXT")
-    private String responseMessage;
+    private String coordinatorComment;
 
     @ManyToOne(optional = false)
     @JoinColumn(
@@ -52,6 +54,15 @@ public class AppointmentRequest {
     )
     private ProfessionalContact professionalContact;
 
+    @ManyToOne
+    @JoinColumn(
+            name = "processed_by_id",
+            foreignKey = @ForeignKey(name = "fk_appointment_request_processed_by")
+    )
+    private User processedBy;
+
+    private LocalDateTime resolvedAt;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -60,7 +71,6 @@ public class AppointmentRequest {
 
     @PrePersist
     protected void onCreate() {
-
         LocalDateTime now = LocalDateTime.now();
 
         createdAt = now;
@@ -73,8 +83,6 @@ public class AppointmentRequest {
 
     @PreUpdate
     protected void onUpdate() {
-
         updatedAt = LocalDateTime.now();
-
     }
 }

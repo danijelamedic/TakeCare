@@ -1,0 +1,432 @@
+<section class="calendar-page">
+
+    <header class="calendar-header">
+        <div>
+            <h1>Calendar</h1>
+    
+            <p class="header-description">
+                View appointments, therapy schedules and important
+                obligations in one place.
+            </p>
+        </div>
+    
+        <button class="primary-button" type="button" [disabled]="patientId === null" (click)="openCreateForm()">
+            <span class="button-icon">+</span>
+            Add event
+        </button>
+    </header>
+
+    @if (errorMessage) {
+    <div class="message error-message">
+        <span>!</span>
+        {{ errorMessage }}
+    </div>
+    }
+    @if (successMessage) {
+    <div class="message success-message">
+        <span>✓</span>
+        {{ successMessage }}
+    </div>
+    }
+
+    @if (isFormOpen) {
+    <section class="event-form-card">
+    
+        <div class="form-header">
+            <div>
+                <p class="eyebrow">
+                    {{ editingEventId !== null ? 'EDIT EVENT' : 'NEW EVENT' }}
+                </p>
+                
+                <h2>
+                    {{
+                    editingEventId !== null
+                    ? 'Edit calendar event'
+                    : 'Add calendar event'
+                    }}
+                </h2>
+            </div>
+    
+            <button class="close-button" type="button" aria-label="Close form" (click)="closeCreateForm()">
+                ×
+            </button>
+        </div>
+    
+        <form [formGroup]="eventForm" (ngSubmit)="saveEvent()">
+            <div class="form-grid">
+    
+                <div class="form-field full-width">
+                    <label for="event-title">
+                        Title <span class="required">*</span>
+                    </label>
+    
+                    <input id="event-title" type="text" formControlName="title" maxlength="200"
+                        placeholder="For example: School meeting" />
+    
+                    @if (
+                    eventForm.get('title')?.touched &&
+                    eventForm.get('title')
+                    ?.hasError('required')
+                    ) {
+                    <span class="validation-message">
+                        Title is required.
+                    </span>
+                    }
+                </div>
+    
+                <div class="form-field">
+                    <label for="event-type">
+                        Event type
+                        <span class="required">*</span>
+                    </label>
+    
+                    <select id="event-type" formControlName="eventType">
+                        @for (
+                        type of manualEventTypes;
+                        track type
+                        ) {
+                        <option [value]="type">
+                            {{ getEnumLabel(type) }}
+                        </option>
+                        }
+                    </select>
+                </div>
+    
+                <div class="form-field">
+                    <label for="event-status">
+                        Status
+                        <span class="required">*</span>
+                    </label>
+    
+                    <select id="event-status" formControlName="status">
+                        @for (
+                        status of eventStatuses;
+                        track status
+                        ) {
+                        <option [value]="status">
+                            {{ getEnumLabel(status) }}
+                        </option>
+                        }
+                    </select>
+                </div>
+    
+                <div class="form-field">
+                    <label for="event-start">
+                        Starts
+                        <span class="required">*</span>
+                    </label>
+    
+                    <input id="event-start" type="datetime-local" formControlName="startDateTime" />
+                </div>
+    
+                <div class="form-field">
+                    <label for="event-end">
+                        Ends
+                    </label>
+    
+                    <input id="event-end" type="datetime-local" formControlName="endDateTime" />
+                </div>
+    
+                <div class="form-field full-width">
+                    <label for="event-location">
+                        Location
+                    </label>
+    
+                    <input id="event-location" type="text" formControlName="location" maxlength="255"
+                        placeholder="Optional location" />
+                </div>
+    
+                <div class="form-field full-width">
+                    <label for="event-description">
+                        Description
+                    </label>
+    
+                    <textarea id="event-description" formControlName="description" rows="4" maxlength="5000"
+                        placeholder="Add helpful details..."></textarea>
+                </div>
+    
+                <div class="reminder-section full-width">
+                    <label class="checkbox-label">
+                        <input type="checkbox" formControlName="reminderEnabled" />
+                
+                        <span>
+                            Remind me 10 minutes before this event
+                        </span>
+                    </label>
+                </div>
+    
+            </div>
+    
+            <div class="form-actions">
+                <button class="secondary-button" type="button" [disabled]="isSaving" (click)="closeCreateForm()">
+                    Cancel
+                </button>
+    
+                <button class="primary-button" type="submit" [disabled]="isSaving">
+                    {{
+                        isSaving
+                        ? 'Saving...'
+                        : editingEventId !== null
+                        ? 'Save changes'
+                        : 'Add event'
+                    }}
+                </button>
+            </div>
+        </form>
+    </section>
+    }
+
+    <section class="calendar-legend">
+        <span class="legend-title">Event types</span>
+
+        <div class="legend-items">
+            <button class="legend-item" type="button" [class.active]="isFilterActive('APPOINTMENTS')"
+                [attr.aria-pressed]="isFilterActive('APPOINTMENTS')" (click)="setEventFilter('APPOINTMENTS')">
+                <span class="legend-color appointment"></span>
+                Appointments
+            </button>
+        
+            <button class="legend-item" type="button" [class.active]="isFilterActive('THERAPIES')"
+                [attr.aria-pressed]="isFilterActive('THERAPIES')" (click)="setEventFilter('THERAPIES')">
+                <span class="legend-color therapy"></span>
+                Therapies
+            </button>
+        
+            <button class="legend-item" type="button" [class.active]="isFilterActive('CONSULTATIONS')"
+                [attr.aria-pressed]="isFilterActive('CONSULTATIONS')" (click)="setEventFilter('CONSULTATIONS')">
+                <span class="legend-color support"></span>
+                Consultations
+            </button>
+        
+            <button class="legend-item" type="button" [class.active]="isFilterActive('SCHOOL')"
+                [attr.aria-pressed]="isFilterActive('SCHOOL')" (click)="setEventFilter('SCHOOL')">
+                <span class="legend-color school"></span>
+                School
+            </button>
+        
+            <button class="legend-item" type="button" [class.active]="isFilterActive('OTHER')"
+                [attr.aria-pressed]="isFilterActive('OTHER')" (click)="setEventFilter('OTHER')">
+                <span class="legend-color other"></span>
+                Other
+            </button>
+        </div>
+    </section>
+
+    @if (isLoading) {
+    <div class="loading-message">
+        <span class="loading-spinner"></span>
+        Loading calendar events...
+    </div>
+    }
+
+    <div class="calendar-layout" [class.has-selection]="selectedEvent !== null">
+        <section class="calendar-card">
+            <div #calendarHost class="full-calendar-host"></div>
+        </section>
+
+        @if (selectedEvent) {
+        <aside class="event-details-card">
+
+            <div class="details-header">
+                <div>
+                    <p class="event-source">
+                        {{ getEventSourceLabel(selectedEvent) }}
+                    </p>
+
+                    <h2>{{ selectedEvent.title }}</h2>
+                </div>
+
+                <button class="close-button" type="button" aria-label="Close event details"
+                    (click)="closeEventDetails()">
+                    ×
+                </button>
+            </div>
+
+            <div class="event-badges">
+                <span class="event-type-badge" [class.appointment-badge]="
+                            selectedEvent.eventType ===
+                            'MEDICAL_APPOINTMENT'
+                        " [class.therapy-badge]="
+                            selectedEvent.eventType ===
+                                'THERAPY_SESSION' ||
+                            selectedEvent.eventType ===
+                                'MEDICATION'
+                        ">
+                    {{
+                    getEnumLabel(
+                    selectedEvent.eventType
+                    )
+                    }}
+                </span>
+
+                <span class="status-badge" [class.confirmed]="
+                            selectedEvent.status === 'CONFIRMED'
+                        " [class.completed]="
+                            selectedEvent.status === 'COMPLETED'
+                        " [class.cancelled]="
+                            selectedEvent.status === 'CANCELLED'
+                        ">
+                    {{
+                    getEnumLabel(
+                    selectedEvent.status
+                    )
+                    }}
+                </span>
+            </div>
+
+            <dl class="details-list">
+
+                <div class="detail-row">
+                    <dt>Date and time</dt>
+                    <dd>
+                        {{
+                        selectedEvent.startDateTime
+                        | date: 'medium'
+                        }}
+                    </dd>
+                </div>
+
+                @if (selectedEvent.endDateTime) {
+                <div class="detail-row">
+                    <dt>Ends</dt>
+                    <dd>
+                        {{
+                        selectedEvent.endDateTime
+                        | date: 'medium'
+                        }}
+                    </dd>
+                </div>
+                }
+
+                @if (selectedEvent.location) {
+                <div class="detail-row">
+                    <dt>Location</dt>
+                    <dd>
+                        {{ selectedEvent.location }}
+                    </dd>
+                </div>
+                }
+
+                @if (selectedEvent.professionalName) {
+                <div class="detail-row">
+                    <dt>Professional</dt>
+                    <dd>
+                        {{
+                        selectedEvent.professionalName
+                        }}
+
+                        @if (
+                        selectedEvent
+                        .professionalProfession
+                        ) {
+                        <span class="professional-type">
+                            ·
+                            {{
+                            getEnumLabel(
+                            selectedEvent
+                            .professionalProfession!
+                            )
+                            }}
+                        </span>
+                        }
+                    </dd>
+                </div>
+                }
+
+                @if (selectedEvent.description) {
+                <div class="detail-row description-row">
+                    <dt>Description</dt>
+                    <dd>
+                        {{ selectedEvent.description }}
+                    </dd>
+                </div>
+                }
+
+                <div class="detail-row">
+                    <dt>Reminder</dt>
+                    <dd>
+                        @if (
+                        selectedEvent.reminderEnabled &&
+                        selectedEvent
+                        .reminderMinutesBefore !== null
+                        ) {
+                        {{
+                        selectedEvent
+                        .reminderMinutesBefore
+                        }}
+                        minutes before
+                        } @else {
+                        Not enabled
+                        }
+                    </dd>
+                </div>
+
+                @if (selectedEvent.createdByName) {
+                <div class="detail-row">
+                    <dt>Created by</dt>
+                    <dd>
+                        {{ selectedEvent.createdByName }}
+                    </dd>
+                </div>
+                }
+
+            </dl>
+
+            @if (
+            selectedEvent.generatedFromTherapy
+            ) {
+            <p class="details-note">
+                This event is generated automatically from
+                the therapy schedule.
+            </p>
+            }
+
+            @if (
+            selectedEvent.appointmentRequestId !== null
+            ) {
+            <p class="details-note">
+                This event is connected to an approved
+                appointment request.
+            </p>
+            }
+
+            @if (canModifySelectedEvent) {
+            <div class="details-actions">
+                <button class="edit-button" type="button" [disabled]="isDeleting" (click)="openEditForm()">
+                    Edit event
+                </button>
+            
+                @if (!isDeleteConfirmationOpen) {
+                <button class="delete-button" type="button" [disabled]="isDeleting" (click)="showDeleteConfirmation()">
+                    Delete
+                </button>
+                }
+            </div>
+            
+            @if (isDeleteConfirmationOpen) {
+            <div class="delete-confirmation">
+                <p>
+                    Are you sure you want to delete this event?
+                </p>
+            
+                <div class="delete-confirmation-actions">
+                    <button class="secondary-button compact-button" type="button" [disabled]="isDeleting" (click)="cancelDelete()">
+                        No, keep it
+                    </button>
+            
+                    <button class="confirm-delete-button" type="button" [disabled]="isDeleting" (click)="deleteSelectedEvent()">
+                        {{
+                        isDeleting
+                        ? 'Deleting...'
+                        : 'Yes, delete'
+                        }}
+                    </button>
+                </div>
+            </div>
+            }
+            }
+
+        </aside>
+        }
+    </div>
+</section>
