@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Calendar as FullCalendarApi, CalendarOptions, DatesSetArg, EventClickArg, EventInput } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -52,6 +53,8 @@ export class Calendar implements OnInit, AfterViewInit, OnDestroy {
 
     private visibleStart: string | null = null;
     private visibleEnd: string | null = null;
+    private requestedAppointmentId: number | null = null;
+    private requestedDate: string | null = null;
 
     eventForm: FormGroup;
 
@@ -108,6 +111,7 @@ export class Calendar implements OnInit, AfterViewInit, OnDestroy {
 
     constructor(
         private readonly formBuilder: FormBuilder,
+        private readonly activatedRoute: ActivatedRoute,
         private readonly authService: AuthService,
         private readonly patientService: PatientService,
         private readonly calendarService: CalendarService,
@@ -148,6 +152,7 @@ export class Calendar implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnInit(): void {
+        this.applyCalendarNavigation();
         this.initializeCalendar();
     }
 
@@ -426,6 +431,7 @@ export class Calendar implements OnInit, AfterViewInit, OnDestroy {
                 next: events => {
                     this.events = events;
                     this.refreshCalendarEvents();
+                    this.openRequestedAppointment(events);
 
                     this.isLoading = false;
                     this.refreshView();
@@ -438,6 +444,25 @@ export class Calendar implements OnInit, AfterViewInit, OnDestroy {
                     this.refreshView();
                 }
             });
+    }
+
+    private openRequestedAppointment(events: CalendarEventResponse[]): void {
+        if (this.requestedAppointmentId === null) {
+            return;
+        }
+
+        const appointmentEvent = events.find(
+            event =>
+            event.appointmentRequestId ===
+            this.requestedAppointmentId
+        );
+
+        if (!appointmentEvent) {
+            return;
+        }
+
+        this.selectedEvent = appointmentEvent;
+        this.requestedAppointmentId = null;
     }
 
     setEventFilter(filter: CalendarEventFilter): void {
@@ -820,5 +845,34 @@ export class Calendar implements OnInit, AfterViewInit, OnDestroy {
                     this.refreshView();
                 }
             });
+    }
+
+    private applyCalendarNavigation(): void {
+        const date =
+            this.activatedRoute.snapshot.queryParamMap.get('date');
+
+        const appointmentIdValue =
+            this.activatedRoute.snapshot.queryParamMap.get(
+            'appointmentRequestId'
+            );
+
+        if (
+            date !== null &&
+            /^\d{4}-\d{2}-\d{2}$/.test(date)
+        ) {
+            this.requestedDate = date;
+            this.calendarOptions.initialDate = date;
+        }
+
+        if (appointmentIdValue !== null) {
+            const appointmentId = Number(appointmentIdValue);
+
+            if (
+            Number.isInteger(appointmentId) &&
+            appointmentId > 0
+            ) {
+            this.requestedAppointmentId = appointmentId;
+            }
+        }
     }
 }

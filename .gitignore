@@ -36,3 +36,5 @@ Thumbs.db
 
 # Test data
 backend/src/main/java/com/takecare/backend/controller/debug/
+
+uploads/

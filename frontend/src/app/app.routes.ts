@@ -18,6 +18,8 @@ import { ProfessionalContactList } from './features/professional-contact/profess
 import { ProfessionalContactDetails } from './features/professional-contact/professional-contact-details/professional-contact-details';
 import {AppointmentRequestList} from './features/appointment-request/appointment-request-list/appointment-request-list';
 import { Calendar } from './features/calendar/calendar';
+import { DocumentList } from './features/document/document-list/document-list';
+import { DocumentForm } from './features/document/document-form/document-form';
 
 export const routes: Routes = [
     {
@@ -151,6 +153,27 @@ export const routes: Routes = [
                 path: 'calendar',
                 component: Calendar,
                 title: 'Calendar | TakeCare'
+            },
+            {
+                path: 'documents',
+                component: DocumentList,
+                title: 'Documents | TakeCare'
+            },
+            {
+                path: 'documents/upload',
+                loadComponent: () =>
+                    import(
+                        './features/document/document-form/document-form'
+                    ).then(component => component.DocumentForm),
+                title: 'Upload document | TakeCare'
+            },
+            {
+                path: 'documents/:id/edit',
+                loadComponent: () =>
+                    import(
+                        './features/document/document-form/document-form'
+                    ).then(component => component.DocumentForm),
+                title: 'Edit document | TakeCare'
             }
         ]
     },
@@ -224,6 +247,27 @@ export const routes: Routes = [
                 path: 'calendar',
                 component: Calendar,
                 title: 'Calendar | TakeCare'
+            },
+            {
+                path: 'documents',
+                component: DocumentList,
+                title: 'Documents | TakeCare'
+            },
+            {
+                path: 'documents/upload',
+                loadComponent: () =>
+                    import(
+                        './features/document/document-form/document-form'
+                    ).then(component => component.DocumentForm),
+                title: 'Upload document | TakeCare'
+            },
+            {
+                path: 'documents/:id/edit',
+                loadComponent: () =>
+                    import(
+                        './features/document/document-form/document-form'
+                    ).then(component => component.DocumentForm),
+                title: 'Edit document | TakeCare'
             }
         ]
     },
